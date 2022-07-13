@@ -1,6 +1,7 @@
 import os
 import csv
 import numpy as np
+import statistics as sc
 
 def open_SR_tab(filename):
     result=[]
@@ -82,7 +83,7 @@ def making_output_2(tab,receptors_name):
         else:
             pass
 
-def normalization(tab,type_pol):
+def normalization(tab,type_pol,method="average"):
     emi_reduced_nitrogen_2016 = []
     emi_reduced_nitrogen_2017 = []
     emi_reduced_nitrogen_2018 = []
@@ -244,8 +245,31 @@ def normalization(tab,type_pol):
     for i in range(np.shape(normalized_2016)[0]):
         for j in range(np.shape(normalized_2016)[1]):
             normalized_2016[i][j] = tc_2016[i][j]*result[i][j]
-    print(result[2])
-    print(normalized_2016[2])
+    for i in range(np.shape(normalized_2017)[0]):
+        for j in range(np.shape(normalized_2017)[1]):
+            normalized_2017[i][j] = tc_2017[i][j]*result[i][j]
+    for i in range(np.shape(normalized_2018)[0]):
+        for j in range(np.shape(normalized_2018)[1]):
+            normalized_2018[i][j] = tc_2018[i][j]*result[i][j]
+    for i in range(np.shape(normalized_2019)[0]):
+        for j in range(np.shape(normalized_2019)[1]):
+            normalized_2019[i][j] = tc_2019[i][j]*result[i][j]
+    for i in range(np.shape(normalized_2020)[0]):
+        for j in range(np.shape(normalized_2020)[1]):
+            normalized_2020[i][j] = tc_2020[i][j]*result[i][j]
+
+    normalized_table = np.zeros((np.shape(normalized_2020)))
+    if method =="average":
+        for i in range(np.shape(normalized_table)[0]):
+            for j in range(np.shape(normalized_table)[1]):
+                normalized_table[i][j]= (normalized_2016[i][j]+normalized_2017[i][j]+normalized_2018[i][j]+normalized_2019[i][j]+normalized_2020[i][j])/5
+    elif method =="median":
+        for i in range(np.shape(normalized_table)[0]):
+            for j in range(np.shape(normalized_table)[1]):
+                normalized_table[i][j] = sc.median([normalized_2016[i][j],normalized_2017[i][j],normalized_2018[i][j],normalized_2019[i][j],normalized_2020[i][j]])
+    return normalized_table
+
+
 
 
 
@@ -306,7 +330,7 @@ def normalization(tab,type_pol):
         ratio.append(temp)"""
 
 
-normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_reduced_nitrogen_2016.csv"),"reduced_nitrogen")
+print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
 
 
 
