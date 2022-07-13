@@ -166,7 +166,6 @@ for k in range(len(list_parameters)):
 
 os.system("rm -r temp")#remove temporary files
 os.system("rm nc2CountryAllocation_4digits")#remove temporary files
-#blabalauiiuoio
 
 
 
