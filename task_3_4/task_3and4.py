@@ -50,6 +50,31 @@ def making_output(tab):
             file.write(str(result[i][j]))#Value of the table
             file.write("\t")
         file.write("\n")
+
+def making_output_3(tab,choice_3bis,choice_4,type_pol,method):
+    name_list_emitters = tab[0]
+    name_list_receptors = tab[1]
+    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method)
+    file = open("output_SR.txt","w")
+    file.write(tab[3][39:-4]+" normalized with the "+choice_1bis+" of the 2016-2020 meteorology.")
+    file = open("output_SR.txt","a")
+    file.write("\n")
+    file.write("\n")
+    file.write("-----------------------------------------------")
+    file.write("\n")
+    file.write("\t")
+    file.write("\t")
+    for i in range(len(name_list_emitters)):#First line contruction: emitters
+        file.write(name_list_emitters[i])
+        file.write("\t")
+    file.write("\n")
+    for i in range(np.shape(result)[0]):
+        file.write(name_list_receptors[i])#construction of the first column: recpetors name
+        file.write("\t")
+        for j in range(np.shape(result)[1]):
+            file.write(str(result[i][j]))#Value of the table
+            file.write("\t")
+        file.write("\n")
 #making_output(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_reduced_nitrogen_2018.csv"))
 def making_output_2(tab,receptors_name):
     name_list_emitters = tab[0]
@@ -267,70 +292,10 @@ def normalization(tab,type_pol,method="average"):
         for i in range(np.shape(normalized_table)[0]):
             for j in range(np.shape(normalized_table)[1]):
                 normalized_table[i][j] = sc.median([normalized_2016[i][j],normalized_2017[i][j],normalized_2018[i][j],normalized_2019[i][j],normalized_2020[i][j]])
+
     return normalized_table
 
-
-
-
-
-    """name_list_emitters = tab[0]
-    name_list_receptors = tab[1]
-    result = convert(tab[2])
-    emis = []
-    tab = []
-    years = ["2016","2017","2018","2019","2020"]
-    for i in range(len(years)):
-        tab.append(convert(open_SR_tab("data_SR_tab/"+type_pol+"_"+years[i]+".csv")[2]))
-    if type_pol == "oxidised_nitrogen":
-        for k in range(len(years)):
-            temp = []
-            emis_tab = open_SR_tab("data_SR_tab/oxidised_nitrogen_"+years[k]+".csv")[2]
-            for i in range(1,np.shape(emis_tab)[1]):
-                temp.append(emis_tab[-1][i])
-            emis.append(temp)
-    elif type_pol == "reduced_nitrogen":
-        for k in range(len(years)):
-            temp = []
-            emis_tab = open_SR_tab("data_SR_tab/reduced_nitrogen_"+years[k]+".csv")[2]
-            for i in range(1,np.shape(emis_tab)[1]):
-                temp.append(emis_tab[-1][i])
-            emis.append(temp)
-    for i in range(np.shape(emis)[0]):
-        for j in range(np.shape(emis)[1]):
-            if emis[i][j] == "":
-                emis[i][j] ="0"
-            else:
-                pass
-    print(np.shape(emis))
-    print("----------------------------------------------------------")
-    print(np.shape(tab))
-    tc_tab = [np.zeros((np.shape(tab[0]))),np.zeros((np.shape(tab[1]))),np.zeros((np.shape(tab[2]))),np.zeros((np.shape(tab[3]))),np.zeros((np.shape(tab[4])))]
-    print(np.shape(tc_tab))
-    for k in range(len(tc_tab)):
-        for i in range(np.shape(tc_tab)[0]):
-                for j in range(np.shape(tc_tab)[1]):
-                    if emis[k][i] == "0":
-                        tc_tab[k][j][i] = float("nan")
-                    else:
-                        tc_tab[k][j][i] = float(tab[k][j][i])/float(emis[k][i])
-    print(tc_tab[2][:][7])
-    ratio = []
-    index_year = years.index(year)
-    for j in range(np.shape(emis)[1]):
-        temp = []
-        for i in range(np.shape(emis)[0]):
-            print(emis[i][j])
-            if emis[i][j] == "emis":
-                pass
-            else:
-                if emis[i][j]=="0":
-                    temp.append(float("nan"))
-                else:
-                    temp.append(float(emis[index_year][j])/float(emis[i][j]))
-        ratio.append(temp)"""
-
-
-print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
+#print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
 
 
 
@@ -352,6 +317,21 @@ while token_1 ==0:
         print("Incorrect input, please try again:")
     else:
         token_1=1
+print("-----------------------------------------------")
+if choice_1 =="normalized":
+    print("\n")
+    print("\t")
+    print("Which method do you want for the normalization ? (average/median)")
+    token_1bis = 0
+    while token_1bis == 0:
+        choice_1bis = input()
+        if choice_1bis != "average" and choice_1bis != "median":
+            token_1bis = 0
+            print("Incorrect input, please try again:")
+        else:
+            token_1bis = 1
+else:
+    pass
 print("Do you want all the receptors ? (yes/no)")
 token_2 = 0
 while token_2==0:
@@ -361,7 +341,6 @@ while token_2==0:
         print("Incorrect input, please try again:")
     else:
         token_2 =1
-print("-----------------------------------------------")
 if choice_2 == "no":
     print("Select the receptors.")
     print("The format must be: EEZ48,EEZ65,EEZ71")
@@ -415,14 +394,11 @@ if choice_1 == "brute":
     elif choice_2 =="no":
         making_output_2(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
 
-
-"""
 elif choice_1 =="normalized":
     if choice_2 =="yes":
-
-
-
-    elif choice_2 =="no":"""
+        making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis)
+    elif choice_2 =="no":
+        pass
 
 
 
