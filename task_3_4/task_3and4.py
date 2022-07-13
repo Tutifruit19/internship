@@ -82,7 +82,7 @@ def making_output_2(tab,receptors_name):
         else:
             pass
 
-def normalization(type_pol):
+def normalization(tab,type_pol):
     emi_reduced_nitrogen_2016 = []
     emi_reduced_nitrogen_2017 = []
     emi_reduced_nitrogen_2018 = []
@@ -233,6 +233,20 @@ def normalization(type_pol):
                 else:
                     tc_2020[i][j] = float("nan")
 
+    name_list_emitters = tab[0]
+    name_list_receptors_all = tab[1]
+    result = convert(tab[2])
+    normalized_2016 = np.zeros((np.shape(result)))
+    normalized_2017 = np.zeros((np.shape(result)))
+    normalized_2018 = np.zeros((np.shape(result)))
+    normalized_2019 = np.zeros((np.shape(result)))
+    normalized_2020 = np.zeros((np.shape(result)))
+    for i in range(np.shape(normalized_2016)[0]):
+        for j in range(np.shape(normalized_2016)[1]):
+            normalized_2016[i][j] = tc_2016[i][j]*result[i][j]
+    print(result[2])
+    print(normalized_2016[2])
+
 
 
     """name_list_emitters = tab[0]
@@ -292,7 +306,7 @@ def normalization(type_pol):
         ratio.append(temp)"""
 
 
-normalization("reduced_nitrogen")
+normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_reduced_nitrogen_2016.csv"),"reduced_nitrogen")
 
 
 
