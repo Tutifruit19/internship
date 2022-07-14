@@ -51,10 +51,10 @@ def making_output(tab):
             file.write("\t")
         file.write("\n")
 
-def making_output_3(tab,choice_3bis,choice_4,type_pol,method):
+def making_output_3(tab,choice_3bis,choice_4,type_pol,method,first_year,last_year):
     name_list_emitters = tab[0]
     name_list_receptors = tab[1]
-    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method)
+    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method,first_year,last_year)
     file = open("output_SR.txt","w")
     file.write(choice_3bis+" normalized with the "+choice_1bis+" of the 2016-2020 meteorology.")
     file = open("output_SR.txt","a")
@@ -76,10 +76,10 @@ def making_output_3(tab,choice_3bis,choice_4,type_pol,method):
             file.write("\t")
         file.write("\n")
 #making_output(open_SR_tab("/home/aurelienh/task_3and4/data/dry_reduced_nitrogen_2018.csv"))
-def making_output_4(tab,receptors_name,choice_3bis,choice_4,type_pol,method):
+def making_output_4(tab,receptors_name,choice_3bis,choice_4,type_pol,method,first_year,last_year):
     name_list_emitters = tab[0]
     name_list_receptors_all = tab[1]
-    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method)
+    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method,first_year,last_year)
     index_receptors = []
     receptors_name_list = receptors_name.split(",")
     for i in range(len(receptors_name_list)):
@@ -140,7 +140,7 @@ def making_output_2(tab,receptors_name):
         else:
             pass
 
-def normalization(tab,type_pol,method="average"):
+def normalization(tab,type_pol,method,first_year,last_year):
     emi_reduced_nitrogen_2016 = []
     emi_reduced_nitrogen_2017 = []
     emi_reduced_nitrogen_2018 = []
@@ -314,12 +314,31 @@ def normalization(tab,type_pol,method="average"):
     for i in range(np.shape(normalized_2020)[0]):
         for j in range(np.shape(normalized_2020)[1]):
             normalized_2020[i][j] = tc_2020[i][j]*result[i][j]
-
+    substract = [normalized_2016,normalized_2017,normalized_2018,normalized_2019,normalized_2020]
+    somme = np.zeros((np.shape(normalized_2020)))
+    print(np.shape(substract))
+    compteur = 5
+    for i in range(np.shape(normalized_2020)[0]):
+        for j in range(np.shape(normalized_2020)[1]):
+            somme[i][j] = normalized_2016[i][j]+normalized_2017[i][j]+normalized_2018[i][j]+normalized_2019[i][j]+normalized_2020[i][j]
+    for k in range(2016,2020+1):
+        if k<int(first_year):
+            for i in range(np.shape(somme)[0]):
+                for j in range(np.shape(somme)[1]):
+                    somme[i][j] = somme[i][j] - substract[5-compteur][i][j]
+            del substract[5-compteur]
+            compteur = compteur - 1
+        elif k>int(last_year):
+            for i in range(np.shape(somme)[0]):
+                for j in range(np.shape(somme)[1]):
+                    somme[i][j] = somme[i][j] - substract[5-compteur][i][j]
+            del substract[5-compteur]
+            compteur = compteur - 1
     normalized_table = np.zeros((np.shape(normalized_2020)))
     if method =="average":
         for i in range(np.shape(normalized_table)[0]):
             for j in range(np.shape(normalized_table)[1]):
-                normalized_table[i][j]= (normalized_2016[i][j]+normalized_2017[i][j]+normalized_2018[i][j]+normalized_2019[i][j]+normalized_2020[i][j])/5
+                normalized_table[i][j]= (somme[i][j])/compteur
     elif method =="median":
         for i in range(np.shape(normalized_table)[0]):
             for j in range(np.shape(normalized_table)[1]):
@@ -364,6 +383,47 @@ if choice_1 =="normalized":
             token_1bis = 1
 else:
     pass
+if choice_1 == "normalized":
+    print("-----------------------------------------------")
+    print("\n")
+    print("\t")
+    print("Do you want a normalisation with all avalaible years ? (yes/no)")
+    token_1n = 0
+    while token_1n == 0:
+        choice_1n = input()
+        if choice_1n != "yes" and choice_1n != "no":
+            token_1n = 0
+            print("Incorrect input, please try again:")
+        else:
+            token_1n = 1
+else:
+    pass
+if choice_1n == "no":
+    print("-----------------------------------------------")
+    print("\n")
+    print("\t")
+    print("Select the first year between 2016 and 2020:")
+    token_1f = 0
+    while token_1f == 0:
+        first_year = input()
+        if first_year != "2016" and first_year != "2017" and first_year != "2018" and first_year != "2019" and first_year != "2020":
+            token_1f = 0
+            print("Incorrect input, please try again")
+        else:
+            token_1f = 1
+
+    print("Select teh last year between 2016 and 2020: (> first year)")
+    token_1f = 0
+    while token_1f == 0:
+        last_year = input()
+        if last_year != "2016" and last_year != "2017" and last_year != "2018" and last_year != "2019" and last_year != "2020":
+            token_1f = 0
+            print("Incorrect input, please try again")
+        else:
+            token_1f = 1
+else:
+    first_year = 2016
+    last_year = 2020
 print("Do you want all the receptors ? (yes/no)")
 token_2 = 0
 while token_2==0:
@@ -428,9 +488,9 @@ if choice_1 == "brute":
 
 elif choice_1 =="normalized":
     if choice_2 =="yes":
-        making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis)
+        making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
     elif choice_2 =="no":
-        making_output_4(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis)
+        making_output_4(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
 
 
-
+#for annee choisie et with les meteorologies choisies
