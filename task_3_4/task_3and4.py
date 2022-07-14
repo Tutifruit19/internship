@@ -76,6 +76,38 @@ def making_output_3(tab,choice_3bis,choice_4,type_pol,method):
             file.write("\t")
         file.write("\n")
 #making_output(open_SR_tab("/home/aurelienh/task_3and4/data/dry_reduced_nitrogen_2018.csv"))
+def making_output_4(tab,receptors_name,choice_3bis,choice_4,type_pol,method):
+    name_list_emitters = tab[0]
+    name_list_receptors_all = tab[1]
+    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method)
+    index_receptors = []
+    receptors_name_list = receptors_name.split(",")
+    for i in range(len(receptors_name_list)):
+        index_receptors.append(name_list_receptors_all.index(receptors_name_list[i]))
+    file = open("output_SR.txt","w")
+    file.write(choice_3bis+" normalized with the "+choice_1bis+" of the 2016-2020 meteorology.")
+    file = open("output_SR.txt","a")
+    file.write("\n")
+    file.write("\n")
+    file.write("-----------------------------------------------")
+    file.write("\n")
+    file.write("\t")
+    file.write("\t")
+    for i in range(len(name_list_emitters)):#First line contruction: emitters
+        file.write(name_list_emitters[i])
+        file.write("\t")
+    file.write("\n")
+    for i in range(np.shape(result)[0]):
+        if i in index_receptors:
+            file.write(name_list_receptors_all[i])#construction of the first column: recpetors name
+            file.write("\t")
+            for j in range(np.shape(result)[1]):
+                file.write(str(result[i][j]))#Value of the table
+                file.write("\t")
+            file.write("\n")
+        else:
+            pass
+
 def making_output_2(tab,receptors_name):
     name_list_emitters = tab[0]
     name_list_receptors_all = tab[1]
@@ -398,7 +430,7 @@ elif choice_1 =="normalized":
     if choice_2 =="yes":
         making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis)
     elif choice_2 =="no":
-        pass
+        making_output_4(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis)
 
 
 
