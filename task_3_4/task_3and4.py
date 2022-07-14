@@ -14,7 +14,7 @@ def open_SR_tab(filename):
         SR_name_receptors.append(result[i][0])
     return [SR_name_emitters,SR_name_receptors,result,filename]
 
-#print(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_reduced_nitrogen_2016.csv"))
+#print(open_SR_tab("/home/aurelienh/task_3and4/data/dry_reduced_nitrogen_2016.csv"))
 
 def convert(tab):
     float_tab = np.zeros((np.shape(tab)[0]-1,np.shape(tab)[1]-1))
@@ -31,7 +31,7 @@ def making_output(tab):
     name_list_receptors = tab[1]
     result = convert(tab[2])
     file = open("output_SR.txt","w")
-    file.write(tab[3][39:-4])
+    file.write(choice_3bis)
     file = open("output_SR.txt","a")
     file.write("\n")
     file.write("\n")
@@ -54,9 +54,9 @@ def making_output(tab):
 def making_output_3(tab,choice_3bis,choice_4,type_pol,method):
     name_list_emitters = tab[0]
     name_list_receptors = tab[1]
-    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method)
+    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method)
     file = open("output_SR.txt","w")
-    file.write(tab[3][39:-4]+" normalized with the "+choice_1bis+" of the 2016-2020 meteorology.")
+    file.write(choice_3bis+" normalized with the "+choice_1bis+" of the 2016-2020 meteorology.")
     file = open("output_SR.txt","a")
     file.write("\n")
     file.write("\n")
@@ -75,7 +75,7 @@ def making_output_3(tab,choice_3bis,choice_4,type_pol,method):
             file.write(str(result[i][j]))#Value of the table
             file.write("\t")
         file.write("\n")
-#making_output(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_reduced_nitrogen_2018.csv"))
+#making_output(open_SR_tab("/home/aurelienh/task_3and4/data/dry_reduced_nitrogen_2018.csv"))
 def making_output_2(tab,receptors_name):
     name_list_emitters = tab[0]
     name_list_receptors_all = tab[1]
@@ -119,76 +119,76 @@ def normalization(tab,type_pol,method="average"):
     emi_oxidised_nitrogen_2018 = []
     emi_oxidised_nitrogen_2019 = []
     emi_oxidised_nitrogen_2020 = []
-    tab_reduced_nitrogen_2016 = open_SR_tab("data_SR_tab/reduced_nitrogen_2016.csv")
+    tab_reduced_nitrogen_2016 = open_SR_tab("data/reduced_nitrogen_2016.csv")
     for i in range(1,np.shape(tab_reduced_nitrogen_2016[2])[1]):
         if tab_reduced_nitrogen_2016[2][-1][i] == "":
             emi_reduced_nitrogen_2016.append(0.0)
         else:
             emi_reduced_nitrogen_2016.append(float(tab_reduced_nitrogen_2016[2][-1][i]))
-    tab_reduced_nitrogen_2017 = open_SR_tab("data_SR_tab/reduced_nitrogen_2017.csv")
+    tab_reduced_nitrogen_2017 = open_SR_tab("data/reduced_nitrogen_2017.csv")
     for i in range(1,np.shape(tab_reduced_nitrogen_2017[2])[1]):
         if tab_reduced_nitrogen_2017[2][-1][i] == "":
             emi_reduced_nitrogen_2017.append(0.0)
         else:
             emi_reduced_nitrogen_2017.append(float(tab_reduced_nitrogen_2017[2][-1][i]))
-    tab_reduced_nitrogen_2018 = open_SR_tab("data_SR_tab/reduced_nitrogen_2018.csv")
+    tab_reduced_nitrogen_2018 = open_SR_tab("data/reduced_nitrogen_2018.csv")
     for i in range(1,np.shape(tab_reduced_nitrogen_2018[2])[1]):
         if tab_reduced_nitrogen_2018[2][-1][i] == "":
             emi_reduced_nitrogen_2018.append(0.0)
         else:
             emi_reduced_nitrogen_2018.append(float(tab_reduced_nitrogen_2018[2][-1][i]))
-    tab_reduced_nitrogen_2019 = open_SR_tab("data_SR_tab/reduced_nitrogen_2019.csv")
+    tab_reduced_nitrogen_2019 = open_SR_tab("data/reduced_nitrogen_2019.csv")
     for i in range(1,np.shape(tab_reduced_nitrogen_2019[2])[1]):
         if tab_reduced_nitrogen_2019[2][-1][i] == "":
             emi_reduced_nitrogen_2019.append(0.0)
         else:
             emi_reduced_nitrogen_2019.append(float(tab_reduced_nitrogen_2019[2][-1][i]))
-    tab_reduced_nitrogen_2020 = open_SR_tab("data_SR_tab/reduced_nitrogen_2020.csv")
+    tab_reduced_nitrogen_2020 = open_SR_tab("data/reduced_nitrogen_2020.csv")
     for i in range(1,np.shape(tab_reduced_nitrogen_2020[2])[1]):
         if tab_reduced_nitrogen_2020[2][-1][i] == "":
             emi_reduced_nitrogen_2020.append(0.0)
         else:
             emi_reduced_nitrogen_2020.append(float(tab_reduced_nitrogen_2020[2][-1][i]))
-    tab_oxidised_nitrogen_2016 = open_SR_tab("data_SR_tab/oxidised_nitrogen_2016.csv")
+    tab_oxidised_nitrogen_2016 = open_SR_tab("data/oxidised_nitrogen_2016.csv")
     for i in range(1,np.shape(tab_oxidised_nitrogen_2016[2])[1]):
         if tab_oxidised_nitrogen_2016[2][-1][i] == "":
             emi_oxidised_nitrogen_2016.append(0.0)
         else:
             emi_oxidised_nitrogen_2016.append(float(tab_oxidised_nitrogen_2016[2][-1][i]))
-    tab_oxidised_nitrogen_2017 = open_SR_tab("data_SR_tab/oxidised_nitrogen_2017.csv")
+    tab_oxidised_nitrogen_2017 = open_SR_tab("data/oxidised_nitrogen_2017.csv")
     for i in range(1,np.shape(tab_oxidised_nitrogen_2017[2])[1]):
         if tab_oxidised_nitrogen_2017[2][-1][i] == "":
             emi_oxidised_nitrogen_2017.append(0.0)
         else:
             emi_oxidised_nitrogen_2017.append(float(tab_oxidised_nitrogen_2017[2][-1][i]))
-    tab_oxidised_nitrogen_2018 = open_SR_tab("data_SR_tab/oxidised_nitrogen_2018.csv")
+    tab_oxidised_nitrogen_2018 = open_SR_tab("data/oxidised_nitrogen_2018.csv")
     for i in range(1,np.shape(tab_oxidised_nitrogen_2018[2])[1]):
         if tab_oxidised_nitrogen_2018[2][-1][i] == "":
             emi_oxidised_nitrogen_2018.append(0.0)
         else:
             emi_oxidised_nitrogen_2018.append(float(tab_oxidised_nitrogen_2018[2][-1][i]))
-    tab_oxidised_nitrogen_2019 = open_SR_tab("data_SR_tab/oxidised_nitrogen_2019.csv")
+    tab_oxidised_nitrogen_2019 = open_SR_tab("data/oxidised_nitrogen_2019.csv")
     for i in range(1,np.shape(tab_oxidised_nitrogen_2019[2])[1]):
         if tab_oxidised_nitrogen_2019[2][-1][i] == "":
             emi_oxidised_nitrogen_2019.append(0.0)
         else:
             emi_oxidised_nitrogen_2019.append(float(tab_oxidised_nitrogen_2019[2][-1][i]))
-    tab_oxidised_nitrogen_2020 = open_SR_tab("data_SR_tab/oxidised_nitrogen_2020.csv")
+    tab_oxidised_nitrogen_2020 = open_SR_tab("data/oxidised_nitrogen_2020.csv")
     for i in range(1,np.shape(tab_oxidised_nitrogen_2020[2])[1]):
         if tab_oxidised_nitrogen_2020[2][-1][i] == "":
             emi_oxidised_nitrogen_2020.append(0.0)
         else:
             emi_oxidised_nitrogen_2020.append(float(tab_oxidised_nitrogen_2020[2][-1][i]))
 
-    SR_tab_2016 = open_SR_tab("data_SR_tab/"+type_pol+"_2016.csv")
+    SR_tab_2016 = open_SR_tab("data/"+type_pol+"_2016.csv")
     result_2016 = convert(SR_tab_2016[2])
-    SR_tab_2017 = open_SR_tab("data_SR_tab/"+type_pol+"_2017.csv")
+    SR_tab_2017 = open_SR_tab("data/"+type_pol+"_2017.csv")
     result_2017 = convert(SR_tab_2017[2])
-    SR_tab_2018 = open_SR_tab("data_SR_tab/"+type_pol+"_2018.csv")
+    SR_tab_2018 = open_SR_tab("data/"+type_pol+"_2018.csv")
     result_2018 = convert(SR_tab_2018[2])
-    SR_tab_2019 = open_SR_tab("data_SR_tab/"+type_pol+"_2019.csv")
+    SR_tab_2019 = open_SR_tab("data/"+type_pol+"_2019.csv")
     result_2019 = convert(SR_tab_2019[2])
-    SR_tab_2020 = open_SR_tab("data_SR_tab/"+type_pol+"_2020.csv")
+    SR_tab_2020 = open_SR_tab("data/"+type_pol+"_2020.csv")
     result_2020 = convert(SR_tab_2020[2])
 
     tc_2016 = np.zeros((np.shape(result_2016)))
@@ -295,7 +295,7 @@ def normalization(tab,type_pol,method="average"):
 
     return normalized_table
 
-#print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
+#print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
 
 
 
@@ -390,13 +390,13 @@ print("-----------------------------------------------")
 
 if choice_1 == "brute":
     if choice_2 == "yes":
-        making_output(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/"+choice_3bis+"_"+choice_4+".csv"))
+        making_output(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"))
     elif choice_2 =="no":
-        making_output_2(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
+        making_output_2(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
 
 elif choice_1 =="normalized":
     if choice_2 =="yes":
-        making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data_SR_tab/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis)
+        making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis)
     elif choice_2 =="no":
         pass
 
