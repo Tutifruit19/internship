@@ -316,8 +316,22 @@ def normalization(tab,type_pol,method,first_year,last_year):
             normalized_2020[i][j] = tc_2020[i][j]*result[i][j]
     substract = [normalized_2016,normalized_2017,normalized_2018,normalized_2019,normalized_2020]
     somme = np.zeros((np.shape(normalized_2020)))
-    print(np.shape(substract))
-    compteur = 5
+    median_tab = np.empty(np.shape(somme),dtype=list)
+    for i in range(np.shape(median_tab)[0]):
+        for j in range(np.shape(median_tab)[1]):
+            median_tab[i][j] = []
+    for i in range(np.shape(median_tab)[0]):
+        for j in range(np.shape(median_tab)[1]):
+            compteur = 0
+            for k in range(2016,2020+1):
+                if k<int(first_year):
+                    pass
+                elif k>int(last_year):
+                    pass
+                else:
+                    median_tab[i][j].append(substract[compteur][i][j])
+                compteur = compteur + 1
+    compteur_bis = 5
     for i in range(np.shape(normalized_2020)[0]):
         for j in range(np.shape(normalized_2020)[1]):
             somme[i][j] = normalized_2016[i][j]+normalized_2017[i][j]+normalized_2018[i][j]+normalized_2019[i][j]+normalized_2020[i][j]
@@ -325,24 +339,24 @@ def normalization(tab,type_pol,method,first_year,last_year):
         if k<int(first_year):
             for i in range(np.shape(somme)[0]):
                 for j in range(np.shape(somme)[1]):
-                    somme[i][j] = somme[i][j] - substract[5-compteur][i][j]
-            del substract[5-compteur]
-            compteur = compteur - 1
+                    somme[i][j] = somme[i][j] - substract[5-compteur_bis][i][j]
+            del substract[5-compteur_bis]
+            compteur_bis = compteur_bis - 1
         elif k>int(last_year):
             for i in range(np.shape(somme)[0]):
                 for j in range(np.shape(somme)[1]):
-                    somme[i][j] = somme[i][j] - substract[5-compteur][i][j]
-            del substract[5-compteur]
-            compteur = compteur - 1
+                    somme[i][j] = somme[i][j] - substract[5-compteur_bis][i][j]
+            del substract[5-compteur_bis]
+            compteur_bis = compteur_bis - 1
     normalized_table = np.zeros((np.shape(normalized_2020)))
     if method =="average":
         for i in range(np.shape(normalized_table)[0]):
             for j in range(np.shape(normalized_table)[1]):
-                normalized_table[i][j]= (somme[i][j])/compteur
+                normalized_table[i][j]= (somme[i][j])/compteur_bis
     elif method =="median":
         for i in range(np.shape(normalized_table)[0]):
             for j in range(np.shape(normalized_table)[1]):
-                normalized_table[i][j] = sc.median([normalized_2016[i][j],normalized_2017[i][j],normalized_2018[i][j],normalized_2019[i][j],normalized_2020[i][j]])
+                normalized_table[i][j] = sc.median(median_tab[i][j])
 
     return normalized_table
 
