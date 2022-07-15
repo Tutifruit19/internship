@@ -316,7 +316,7 @@ def normalization(tab,type_pol,method,first_year,last_year):
             normalized_2020[i][j] = tc_2020[i][j]*result[i][j]
     substract = [normalized_2016,normalized_2017,normalized_2018,normalized_2019,normalized_2020]
     somme = np.zeros((np.shape(normalized_2020)))
-    median_tab = np.empty(np.shape(somme),dtype=list)
+    median_tab = np.empty(np.shape(somme),dtype=list)#start the stuff
     for i in range(np.shape(median_tab)[0]):
         for j in range(np.shape(median_tab)[1]):
             median_tab[i][j] = []
