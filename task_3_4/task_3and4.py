@@ -361,150 +361,268 @@ def normalization(tab,type_pol,method,first_year,last_year):
     return normalized_table
 
 #print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
-
+print(open_SR_tab("/home/aurelienh/task_3and4/data/data_jurek_ospar/wet_oxidised_nitrogen_2007.csv"))
 
 
 ### All Selection before to run the the routine
 print("-----------------------------------------------")
 print("\n")
 print("\n")
-print("This routine creates SR tables between 2016 and 2020. You can choose receptors that you want and if you want normalized SR tables (the normalization is made with 2016-2020 meteorology)")
+print("This routine creates SR tables between ??? and 2020. You can choose receptors that you want and if you want normalized SR tables (the normalization is made with 2016-2020 meteorology)")
 print("\n")
 print("\n")
 print("-----------------------------------------------")
 print("\n")
-print("Do you want brute SR tables or normalized SR tables ? (brute/normalized)")
-token_1 = 0
-while token_1 ==0:
-    choice_1 = input()
-    if choice_1 !="brute" and choice_1 !="normalized":
-        token_1=0
+print("Do you want a normalization with 2016-2020 years and for a year between these years ? because all the receptors are not available before. If you wwant before you can use 1995-2020 normalization or less but just for Helcom and Ospar receptors. (yes/no)")
+token_0 = 0
+while token_0 == 0:
+    choice_0 = input()
+    if choice_0 != "yes" and choice_0 != "no":
+        token_0 = 0
         print("Incorrect input, please try again:")
     else:
-        token_1=1
+        token_0 = 1
+print("\n")
+print("\n")
 print("-----------------------------------------------")
-if choice_1 =="normalized":
-    print("\n")
-    print("\t")
-    print("Which method do you want for the normalization ? (average/median)")
-    token_1bis = 0
-    while token_1bis == 0:
-        choice_1bis = input()
-        if choice_1bis != "average" and choice_1bis != "median":
-            token_1bis = 0
+if choice_0 == "yes":
+    print("Do you want brute SR tables or normalized SR tables ? (brute/normalized)")
+    token_1 = 0
+    while token_1 ==0:
+        choice_1 = input()
+        if choice_1 !="brute" and choice_1 !="normalized":
+            token_1=0
             print("Incorrect input, please try again:")
         else:
-            token_1bis = 1
-else:
-    pass
-if choice_1 == "normalized":
+            token_1=1
     print("-----------------------------------------------")
-    print("\n")
-    print("\t")
-    print("Do you want a normalisation with all avalaible years ? (yes/no)")
-    token_1n = 0
-    while token_1n == 0:
-        choice_1n = input()
-        if choice_1n != "yes" and choice_1n != "no":
-            token_1n = 0
-            print("Incorrect input, please try again:")
-        else:
-            token_1n = 1
-else:
-    pass
-if choice_1n == "no":
-    print("-----------------------------------------------")
-    print("\n")
-    print("\t")
-    print("Select the first year between 2016 and 2020:")
-    token_1f = 0
-    while token_1f == 0:
-        first_year = input()
-        if first_year != "2016" and first_year != "2017" and first_year != "2018" and first_year != "2019" and first_year != "2020":
-            token_1f = 0
-            print("Incorrect input, please try again")
-        else:
-            token_1f = 1
+    if choice_1 =="normalized":
+        print("\n")
+        print("\t")
+        print("Which method do you want for the normalization ? (average/median)")
+        token_1bis = 0
+        while token_1bis == 0:
+            choice_1bis = input()
+            if choice_1bis != "average" and choice_1bis != "median":
+                token_1bis = 0
+                print("Incorrect input, please try again:")
+            else:
+                token_1bis = 1
+    else:
+        pass
+    if choice_1 == "normalized":
+        print("-----------------------------------------------")
+        print("\n")
+        print("\t")
+        print("Do you want a normalisation with all avalaible years ? (yes/no)")
+        token_1n = 0
+        while token_1n == 0:
+            choice_1n = input()
+            if choice_1n != "yes" and choice_1n != "no":
+                token_1n = 0
+                print("Incorrect input, please try again:")
+            else:
+                token_1n = 1
+    else:
+        pass
+    if choice_1n == "no":
+        print("-----------------------------------------------")
+        print("\n")
+        print("\t")
+        print("Select the first year between 2016 and 2020:")
+        token_1f = 0
+        while token_1f == 0:
+            first_year = input()
+            if first_year != "2016" and first_year != "2017" and first_year != "2018" and first_year != "2019" and first_year != "2020":
+                token_1f = 0
+                print("Incorrect input, please try again")
+            else:
+                token_1f = 1
 
-    print("Select teh last year between 2016 and 2020: (> first year)")
-    token_1f = 0
-    while token_1f == 0:
-        last_year = input()
-        if last_year != "2016" and last_year != "2017" and last_year != "2018" and last_year != "2019" and last_year != "2020":
-            token_1f = 0
+        print("Select the last year between 2016 and 2020: (> first year)")
+        token_1f = 0
+        while token_1f == 0:
+            last_year = input()
+            if last_year != "2016" and last_year != "2017" and last_year != "2018" and last_year != "2019" and last_year != "2020":
+                token_1f = 0
+                print("Incorrect input, please try again")
+            else:
+                token_1f = 1
+    else:
+        first_year = 2016
+        last_year = 2020
+    print("Do you want all the receptors ? (yes/no)")
+    token_2 = 0
+    while token_2==0:
+        choice_2 = input()
+        if choice_2 !="yes" and choice_2 !="no":
+            token_2=0
+            print("Incorrect input, please try again:")
+        else:
+            token_2 =1
+    if choice_2 == "no":
+        print("Select the receptors.")
+        print("The format must be: EEZ48,EEZ65,EEZ71")
+        print("Please enter the zones separated by comma with no blanks:")
+        str_receptors = input()
+    else:
+        pass
+    print("-----------------------------------------------")
+    print("\n")
+    print("Please, select your parameters: oxidised nitrogen, dry oxidised nitrogen, wet oxidised nitrogen, reduced nitrogen, dry reduced nitrogen, wet reduced nitrogen ?")
+    print("Example: wet oxidised nitrogen")
+    print("Please enter without capital letter:")
+    token_3 = 0
+    while token_3 == 0:
+        choice_3 = input()
+        if choice_3 != "oxidised nitrogen" and choice_3 != "dry oxidised nitrogen" and choice_3 != "wet oxidised nitrogen" and choice_3 != "reduced nitrogen" and choice_3 != "dry reduced nitrogen" and choice_3 != "wet reduced nitrogen":
+            token_3 = 0
+            print("Incorrect input, please try again:")
+        else:
+            if choice_3 == "oxidised nitrogen":
+                choice_3bis = "oxidised_nitrogen"
+            elif choice_3 == "dry oxidised nitrogen":
+                choice_3bis = "dry_oxidised_nitrogen"
+            elif choice_3 == "wet oxidised nitrogen":
+                choice_3bis = "wet_oxidised_nitrogen"
+            elif choice_3 == "reduced nitrogen":
+                choice_3bis = "reduced_nitrogen"
+            elif choice_3 == "dry reduced nitrogen":
+                choice_3bis = "dry_reduced_nitrogen"
+            elif choice_3 == "wet reduced nitrogen":
+                choice_3bis = "wet_reduced_nitrogen"
+            token_3 = 1
+    print("-----------------------------------------------")
+    print("\n")
+    print("Please select a year: 2016,2017,2018,2019,2020")
+    token_4 = 0
+    while token_4 == 0:
+        choice_4 = input()
+        if choice_4 != "2016" and choice_4 != "2017" and choice_4 != "2018" and choice_4 != "2019" and choice_4 != "2020":
+            token_4 = 0
             print("Incorrect input, please try again")
         else:
-            token_1f = 1
-else:
-    first_year = 2016
-    last_year = 2020
-print("Do you want all the receptors ? (yes/no)")
-token_2 = 0
-while token_2==0:
-    choice_2 = input()
-    if choice_2 !="yes" and choice_2 !="no":
-        token_2=0
-        print("Incorrect input, please try again:")
-    else:
-        token_2 =1
-if choice_2 == "no":
-    print("Select the receptors.")
-    print("The format must be: EEZ48,EEZ65,EEZ71")
-    print("Please enter the zones separated by comma with no blanks:")
-    str_receptors = input()
-else:
-    pass
-print("-----------------------------------------------")
-print("\n")
-print("Please, select your parameters: oxidised nitrogen, dry oxidised nitrogen, wet oxidised nitrogen, reduced nitrogen, dry reduced nitrogen, wet reduced nitrogen ?")
-print("Example: wet oxidised nitrogen")
-print("Please enter without capital letter:")
-token_3 = 0
-while token_3 == 0:
-    choice_3 = input()
-    if choice_3 != "oxidised nitrogen" and choice_3 != "dry oxidised nitrogen" and choice_3 != "wet oxidised nitrogen" and choice_3 != "reduced nitrogen" and choice_3 != "dry reduced nitrogen" and choice_3 != "wet reduced nitrogen":
-        token_3 = 0
-        print("Incorrect input, please try again:")
-    else:
-        if choice_3 == "oxidised nitrogen":
-            choice_3bis = "oxidised_nitrogen"
-        elif choice_3 == "dry oxidised nitrogen":
-            choice_3bis = "dry_oxidised_nitrogen"
-        elif choice_3 == "wet oxidised nitrogen":
-            choice_3bis = "wet_oxidised_nitrogen"
-        elif choice_3 == "reduced nitrogen":
-            choice_3bis = "reduced_nitrogen"
-        elif choice_3 == "dry reduced nitrogen":
-            choice_3bis = "dry_reduced_nitrogen"
-        elif choice_3 == "wet reduced nitrogen":
-            choice_3bis = "wet_reduced_nitrogen"
-        token_3 = 1
-print("-----------------------------------------------")
-print("\n")
-print("Please select a year: 2016,2017,2018,2019,2020")
-token_4 = 0
-while token_4 == 0:
-    choice_4 = input()
-    if choice_4 != "2016" and choice_4 != "2017" and choice_4 != "2018" and choice_4 != "2019" and choice_4 != "2020":
-        token_4 = 0
-        print("Incorrect input, please try again")
-    else:
-        token_4 = 1
-print("-----------------------------------------------")
+            token_4 = 1
+    print("-----------------------------------------------")
 
 ### The principal routine
 
-if choice_1 == "brute":
-    if choice_2 == "yes":
-        making_output(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"))
-    elif choice_2 =="no":
-        making_output_2(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
+    if choice_1 == "brute":
+        if choice_2 == "yes":
+            making_output(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"))
+        elif choice_2 =="no":
+            making_output_2(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
 
-elif choice_1 =="normalized":
-    if choice_2 =="yes":
-        making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
-    elif choice_2 =="no":
-        making_output_4(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
+    elif choice_1 =="normalized":
+        if choice_2 =="yes":
+            making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
+        elif choice_2 =="no":
+            making_output_4(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
+###
+elif choice_0 == "no":
+    print("Do you want brute SR tables or normalized SR tables ? (brute/normalized)")
+    token_1a = 0
+    while token_1a ==0:
+        choice_1 = input()
+        if choice_1 !="brute" and choice_1 !="normalized":
+            token_1a=0
+            print("Incorrect input, please try again:")
+        else:
+            token_1a=1
+    print("-----------------------------------------------")
+    if choice_1 =="normalized":
+        print("\n")
+        print("\t")
+        print("Which method do you want for the normalization ? (average/median)")
+        token_1bisa = 0
+        while token_1bisa == 0:
+            choice_1bis = input()
+            if choice_1bis != "average" and choice_1bis != "median":
+                token_1bisa = 0
+                print("Incorrect input, please try again:")
+            else:
+                token_1bisa = 1
+    else:
+        pass
+    print("-----------------------------------------------")
+    print("\n")
+    print("\t")
+    print("Select the first year between 1995 and 2020:")
+    token_4a = 0
+    while token_4a == 0:
+        first_year = input()
+        if int(first_year) <1995 or int(first_year) > 2020 :
+            token_4a = 0
+            print("Incorrect input, please try again")
+        else:
+            token_4a = 1
+    print("Select the last year between 2016 and 2020: (> first year)")
+    token_4a = 0
+    while token_4a == 0:
+        last_year = input()
+        if int(last_year) <1995 or int(last_year) > 2020 or int(last_year) < int(first_year):
+            token_4a = 0
+            print("Incorrect input, please try again")
+        else:
+            token_4a = 1
+    print("-----------------------------------------------")
+    print("\n")
+    print("\t")
+    print("Do you want all the receptors ? (yes/no)")
+    token_2 = 0
+    while token_2==0:
+        choice_2 = input()
+        if choice_2 !="yes" and choice_2 !="no":
+            token_2=0
+            print("Incorrect input, please try again:")
+        else:
+            token_2 =1
+    if choice_2 == "no":
+        print("Select the receptors. Only the Helcom or Ospar receptors")
+        print("The format must be: EEZ48,EEZ65,EEZ71")
+        print("Please enter the zones separated by comma with no blanks:")
+        str_receptors = input()
+    else:
+        pass
+    print("-----------------------------------------------")
+    print("\n")
+    print("Please, select your parameters: oxidised nitrogen, dry oxidised nitrogen, wet oxidised nitrogen, reduced nitrogen, dry reduced nitrogen, wet reduced nitrogen ?")
+    print("Example: wet oxidised nitrogen")
+    print("Please enter without capital letter:")
+    token_3 = 0
+    while token_3 == 0:
+        choice_3 = input()
+        if choice_3 != "oxidised nitrogen" and choice_3 != "dry oxidised nitrogen" and choice_3 != "wet oxidised nitrogen" and choice_3 != "reduced nitrogen" and choice_3 != "dry reduced nitrogen" and choice_3 != "wet reduced nitrogen":
+            token_3 = 0
+            print("Incorrect input, please try again:")
+        else:
+            if choice_3 == "oxidised nitrogen":
+                choice_3bis = "oxidised_nitrogen"
+            elif choice_3 == "dry oxidised nitrogen":
+                choice_3bis = "dry_oxidised_nitrogen"
+            elif choice_3 == "wet oxidised nitrogen":
+                choice_3bis = "wet_oxidised_nitrogen"
+            elif choice_3 == "reduced nitrogen":
+                choice_3bis = "reduced_nitrogen"
+            elif choice_3 == "dry reduced nitrogen":
+                choice_3bis = "dry_reduced_nitrogen"
+            elif choice_3 == "wet reduced nitrogen":
+                choice_3bis = "wet_reduced_nitrogen"
+            token_3 = 1
+    print("-----------------------------------------------")
+    print("\n")
+    print("Please select a year between 1995 and 2020")
+    token_4 = 0
+    while token_4 == 0:
+        choice_4 = input()
+        if int(choice_4) < 1995 or int(choice_4) > 2020 :
+            token_4 = 0
+            print("Incorrect input, please try again")
+        else:
+            token_4 = 1
+    print("-----------------------------------------------")
+
+### Principal routine 2
 
 
 #for annee choisie et with les meteorologies choisies
