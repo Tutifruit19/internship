@@ -66,7 +66,11 @@ def fusion_open_SR_table(filename_1,filename_2):
     SR_name_emitters = result[0]
     SR_name_receptors =[]
     for i in range(1,np.shape(result)[0]):
-        SR_name_receptors.append(result[i][0])
+        l = 0
+        while result[i][0][l] !=" ":
+            l = l+1
+        SR_name_receptors.append(result[i][0][:l])
+    print(SR_name_receptors)
     return [SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
 
 
@@ -646,5 +650,7 @@ elif choice_0 == "no":
     if choice_1 == "brute":
         if choice_2 == "yes":
             making_output(fusion_open_SR_table("/home/aurelienh/task_3and4/data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","/home/aurelienh/task_3and4/data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"))
+        elif choice_2 == "no":
+            making_output_2(fusion_open_SR_table("/home/aurelienh/task_3and4/data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","/home/aurelienh/task_3and4/data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
 
 #for annee choisie et with les meteorologies choisies
