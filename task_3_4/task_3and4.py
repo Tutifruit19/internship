@@ -50,6 +50,25 @@ def making_output(tab):
             file.write(str(result[i][j]))#Value of the table
             file.write("\t")
         file.write("\n")
+def fusion_open_SR_table(filename_1,filename_2):
+    result=[]
+    with open(filename_1) as data:
+        for line in csv.reader(data):
+            result.append(line[0].split(";"))
+    with open(filename_2) as data:
+        compteur=0
+        for line in csv.reader(data):
+            if compteur == 0:
+                pass
+            else:
+                result.append(line[0].split(";"))
+            compteur = compteur + 1
+    SR_name_emitters = result[0]
+    SR_name_receptors =[]
+    for i in range(1,np.shape(result)[0]):
+        SR_name_receptors.append(result[i][0])
+    return [SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
+
 
 def making_output_3(tab,choice_3bis,choice_4,type_pol,method,first_year,last_year):
     name_list_emitters = tab[0]
@@ -361,7 +380,7 @@ def normalization(tab,type_pol,method,first_year,last_year):
     return normalized_table
 
 #print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
-print(open_SR_tab("/home/aurelienh/task_3and4/data/data_jurek_ospar/wet_oxidised_nitrogen_2007.csv"))
+#print(open_SR_tab("/home/aurelienh/task_3and4/data/data_jurek_ospar/wet_oxidised_nitrogen_2007.csv"))
 
 
 ### All Selection before to run the the routine
@@ -423,34 +442,34 @@ if choice_0 == "yes":
                 print("Incorrect input, please try again:")
             else:
                 token_1n = 1
+        if choice_1n == "no":
+            print("-----------------------------------------------")
+            print("\n")
+            print("\t")
+            print("Select the first year between 2016 and 2020:")
+            token_1f = 0
+            while token_1f == 0:
+                first_year = input()
+                if first_year != "2016" and first_year != "2017" and first_year != "2018" and first_year != "2019" and first_year != "2020":
+                    token_1f = 0
+                    print("Incorrect input, please try again")
+                else:
+                    token_1f = 1
+
+            print("Select the last year between 2016 and 2020: (> first year)")
+            token_1f = 0
+            while token_1f == 0:
+                last_year = input()
+                if last_year != "2016" and last_year != "2017" and last_year != "2018" and last_year != "2019" and last_year != "2020":
+                    token_1f = 0
+                    print("Incorrect input, please try again")
+                else:
+                    token_1f = 1
+        else:
+            first_year = 2016
+            last_year = 2020
     else:
         pass
-    if choice_1n == "no":
-        print("-----------------------------------------------")
-        print("\n")
-        print("\t")
-        print("Select the first year between 2016 and 2020:")
-        token_1f = 0
-        while token_1f == 0:
-            first_year = input()
-            if first_year != "2016" and first_year != "2017" and first_year != "2018" and first_year != "2019" and first_year != "2020":
-                token_1f = 0
-                print("Incorrect input, please try again")
-            else:
-                token_1f = 1
-
-        print("Select the last year between 2016 and 2020: (> first year)")
-        token_1f = 0
-        while token_1f == 0:
-            last_year = input()
-            if last_year != "2016" and last_year != "2017" and last_year != "2018" and last_year != "2019" and last_year != "2020":
-                token_1f = 0
-                print("Incorrect input, please try again")
-            else:
-                token_1f = 1
-    else:
-        first_year = 2016
-        last_year = 2020
     print("Do you want all the receptors ? (yes/no)")
     token_2 = 0
     while token_2==0:
@@ -547,27 +566,28 @@ elif choice_0 == "no":
     print("-----------------------------------------------")
     print("\n")
     print("\t")
-    print("Select the first year between 1995 and 2020:")
-    token_4a = 0
-    while token_4a == 0:
-        first_year = input()
-        if int(first_year) <1995 or int(first_year) > 2020 :
-            token_4a = 0
-            print("Incorrect input, please try again")
-        else:
-            token_4a = 1
-    print("Select the last year between 2016 and 2020: (> first year)")
-    token_4a = 0
-    while token_4a == 0:
-        last_year = input()
-        if int(last_year) <1995 or int(last_year) > 2020 or int(last_year) < int(first_year):
-            token_4a = 0
-            print("Incorrect input, please try again")
-        else:
-            token_4a = 1
-    print("-----------------------------------------------")
-    print("\n")
-    print("\t")
+    if choice_1 =="normalized":
+        print("Select the first year between 1995 and 2020:")
+        token_4a = 0
+        while token_4a == 0:
+            first_year = input()
+            if int(first_year) <1995 or int(first_year) > 2020 :
+                token_4a = 0
+                print("Incorrect input, please try again")
+            else:
+                token_4a = 1
+        print("Select the last year between 2016 and 2020: (> first year)")
+        token_4a = 0
+        while token_4a == 0:
+            last_year = input()
+            if int(last_year) <1995 or int(last_year) > 2020 or int(last_year) < int(first_year):
+                token_4a = 0
+                print("Incorrect input, please try again")
+            else:
+                token_4a = 1
+        print("-----------------------------------------------")
+        print("\n")
+        print("\t")
     print("Do you want all the receptors ? (yes/no)")
     token_2 = 0
     while token_2==0:
@@ -623,6 +643,8 @@ elif choice_0 == "no":
     print("-----------------------------------------------")
 
 ### Principal routine 2
-
+    if choice_1 == "brute":
+        if choice_2 == "yes":
+            making_output(fusion_open_SR_table("/home/aurelienh/task_3and4/data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","/home/aurelienh/task_3and4/data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"))
 
 #for annee choisie et with les meteorologies choisies
