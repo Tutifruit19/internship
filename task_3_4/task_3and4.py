@@ -77,7 +77,7 @@ def fusion_open_SR_table(filename_1,filename_2):
 def making_output_3(tab,choice_3bis,choice_4,type_pol,method,first_year,last_year):
     name_list_emitters = tab[0]
     name_list_receptors = tab[1]
-    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method,first_year,last_year)
+    result = normalization(open_SR_tab("data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method,first_year,last_year)
     file = open("output_SR.txt","w")
     file.write(choice_3bis+" normalized with the "+choice_1bis+" of the 2016-2020 meteorology.")
     file = open("output_SR.txt","a")
@@ -102,7 +102,7 @@ def making_output_3(tab,choice_3bis,choice_4,type_pol,method,first_year,last_yea
 def making_output_4(tab,receptors_name,choice_3bis,choice_4,type_pol,method,first_year,last_year):
     name_list_emitters = tab[0]
     name_list_receptors_all = tab[1]
-    result = normalization(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method,first_year,last_year)
+    result = normalization(open_SR_tab("data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,method,first_year,last_year)
     index_receptors = []
     receptors_name_list = receptors_name.split(",")
     for i in range(len(receptors_name_list)):
@@ -532,15 +532,15 @@ if choice_0 == "yes":
 
     if choice_1 == "brute":
         if choice_2 == "yes":
-            making_output(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"))
+            making_output(open_SR_tab("data/"+choice_3bis+"_"+choice_4+".csv"))
         elif choice_2 =="no":
-            making_output_2(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
+            making_output_2(open_SR_tab("data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
 
     elif choice_1 =="normalized":
         if choice_2 =="yes":
-            making_output_3(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
+            making_output_3(open_SR_tab("data/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
         elif choice_2 =="no":
-            making_output_4(open_SR_tab("/home/aurelienh/task_3and4/data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
+            making_output_4(open_SR_tab("data/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
 ###
 elif choice_0 == "no":
     print("Do you want brute SR tables or normalized SR tables ? (brute/normalized)")
@@ -649,8 +649,11 @@ elif choice_0 == "no":
 ### Principal routine 2
     if choice_1 == "brute":
         if choice_2 == "yes":
-            making_output(fusion_open_SR_table("/home/aurelienh/task_3and4/data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","/home/aurelienh/task_3and4/data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"))
+            making_output(fusion_open_SR_table("data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"))
         elif choice_2 == "no":
-            making_output_2(fusion_open_SR_table("/home/aurelienh/task_3and4/data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","/home/aurelienh/task_3and4/data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
+            making_output_2(fusion_open_SR_table("data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"),str_receptors)
+    elif choice_1 == "normalized":
+        if choice_2 == "yes":
+            making_output_3(fusion_open_SR_tab("data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"),choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
 
 #for annee choisie et with les meteorologies choisies
