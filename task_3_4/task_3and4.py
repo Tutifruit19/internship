@@ -174,6 +174,10 @@ def normalization(tab,type_pol,method,first_year,last_year):
     emi_oxidised_nitrogen_2018 = []
     emi_oxidised_nitrogen_2019 = []
     emi_oxidised_nitrogen_2020 = []
+
+    number_year = (last_year - first_year) + 1
+    for p in range(number_year):
+
     tab_reduced_nitrogen_2016 = open_SR_tab("data/reduced_nitrogen_2016.csv")
     for i in range(1,np.shape(tab_reduced_nitrogen_2016[2])[1]):
         if tab_reduced_nitrogen_2016[2][-1][i] == "":
