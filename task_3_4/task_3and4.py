@@ -627,6 +627,9 @@ if choice_0 == "yes":
         else:
             token_4 = 1
     print("-----------------------------------------------")
+    print("The text file output_SR.txt has been created. It include the SR table based on yours choices.")
+    print("-----------------------------------------------")
+    print("The text file transfer_coef.txt has been created. It include the transfer coef based on yours choices.")
 
 ### The principal routine
 
@@ -703,14 +706,14 @@ elif choice_0 == "no":
             token_2 =1
     if choice_2 == "no":
         print("Select the receptors. Only the Helcom or Ospar receptors")
-        print("The format must be: EEZ48,EEZ65,EEZ71")
+        print("The format must be: EEZ48,EEZ65,EEZ71,OR1,HE8")
         print("Please enter the zones separated by comma with no blanks:")
         str_receptors = input()
     else:
         pass
     print("-----------------------------------------------")
     print("\n")
-    print("Please, select your parameters: oxidised nitrogen, dry oxidised nitrogen, wet oxidised nitrogen, reduced nitrogen, dry reduced nitrogen, wet reduced nitrogen ?")
+    print("Please, select your parameters: dry oxidised nitrogen, wet oxidised nitrogen, dry reduced nitrogen, wet reduced nitrogen ?")
     print("Example: wet oxidised nitrogen")
     print("Please enter without capital letter:")
     token_3 = 0
@@ -745,6 +748,9 @@ elif choice_0 == "no":
         else:
             token_4 = 1
     print("-----------------------------------------------")
+    print("The text file output_SR.txt has been created. It include the SR table based on yours choices.")
+    print("-----------------------------------------------")
+    print("The text file transfer_coef.txt has been created. It include the transfer coef based on yours choices.")
 
 ### Principal routine 2
     if choice_1 == "brute":
