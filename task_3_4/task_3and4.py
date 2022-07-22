@@ -64,19 +64,13 @@ def fusion_open_SR_table(filename_1,filename_2):
                 result.append(line[0].split(";"))
             compteur = compteur + 1
     SR_name_emitters = result[0]
-    new_SR_name_emitters = []
-    for i in range(1,len(SR_name_emitters)):
-        k=0
-        while SR_name_emitters[i][k] ==" ":
-            k = k+1
-        new_SR_name_emitters.append(SR_name_emitters[i][k:])
     SR_name_receptors =[]
     for i in range(1,np.shape(result)[0]):
         l = 0
         while result[i][0][l] !=" ":
             l = l+1
         SR_name_receptors.append(result[i][0][:l])
-    return [new_SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
+    return [SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
 
 
 def making_output_3(tab,choice_3bis,choice_4,type_pol,method,first_year,last_year):
@@ -174,27 +168,6 @@ def making_output_2(tab,receptors_name):
         else:
             pass
 
-def filter_heiko_tables(tab,jurek_tab):
-    jurek_sources = jurek_tab[0]
-    list_of_non_present_sources = []
-    list_of_sources_heiko_tables = tab[0][1:]
-    for i in range(1,len(list_of_sources_heiko_tables)):
-        print(list_of_sources_heiko_tables[i])
-        print(jurek_sources)
-        print("--------------------")
-        if list_of_sources_heiko_tables[i] in jurek_sources:
-            pass
-        else:
-            list_of_non_present_sources.append(list_of_sources_heiko_tables[i])
-    heiko_tab = tab[2]
-    print(list_of_non_present_sources)
-    index_of_non_present_sources = []
-    for i in range(len(list_of_non_present_sources)):
-        index_of_non_present_sources.append(list_of_sources_heiko_tables.index(list_of_non_present_sources[i]))
-    adapted_heiko_tab = np.delete(heiko_tab,index_of_non_present_sources,axis=1)
-    return adapted_heiko_tab
-
-
 def normalization(tab,type_pol,method,first_year_str,last_year_str):
     """emi_reduced_nitrogen_2016 = []
     emi_reduced_nitrogen_2017 = []
@@ -219,24 +192,20 @@ def normalization(tab,type_pol,method,first_year_str,last_year_str):
     compteur = 0
     for p in range(first_year,last_year+1):
         tab_reduced_nitrogen = open_SR_tab("data/data_emi_normalization/"+str(p)+"_reduced_nitrogen.csv")
-        tab_jurek_associate = fusion_open_SR_table("data/data_jurek_helcom/"+choice_3bis+"_"+str(p)+".csv","data/data_jurek_ospar/"+choice_3bis+"_"+str(p)+".csv")
-        adapted_tab_reduced_nitrogen = convert(filter_heiko_tables(tab_reduced_nitrogen,tab_jurek_associate))
-        for i in range(1,np.shape(adapted_tab_reduced_nitrogen)[1]):
+        for i in range(1,np.shape(tab_reduced_nitrogen[2])[1]):
             if tab_reduced_nitrogen[2][-1][i] == "":
                 emi_reduced_nitrogen[compteur].append(0.0)
             else:
-                emi_reduced_nitrogen[compteur].append(adapted_tab_reduced_nitrogen[-1][i])
+                emi_reduced_nitrogen[compteur].append(float(tab_reduced_nitrogen[2][-1][i]))
         compteur = compteur + 1
     compteur = 0
     for p in range(first_year,last_year+1):
         tab_oxidised_nitrogen = open_SR_tab("data/data_emi_normalization/"+str(p)+"_oxidised_nitrogen.csv")
-        tab_jurek_associate_2 = fusion_open_SR_table("data/data_jurek_helcom/"+choice_3bis+"_"+str(p)+".csv","data/data_jurek_ospar/"+choice_3bis+"_"+str(p)+".csv")
-        adapted_tab_oxidised_nitrogen = convert(filter_heiko_tables(tab_oxidised_nitrogen,tab_jurek_associate_2))
-        for i in range(1,np.shape(adapted_tab_oxidised_nitrogen)[1]):
+        for i in range(1,np.shape(tab_oxidised_nitrogen[2])[1]):
             if tab_oxidised_nitrogen[2][-1][i] == "":
                 emi_oxidised_nitrogen[compteur].append(0.0)
             else:
-                emi_oxidised_nitrogen[compteur].append(adapted_tab_oxidised_nitrogen[-1][i])
+                emi_oxidised_nitrogen[compteur].append(float(tab_oxidised_nitrogen[2][-1][i]))
         compteur = compteur + 1
 
 
@@ -302,7 +271,6 @@ def normalization(tab,type_pol,method,first_year_str,last_year_str):
             result_jurek_tempo = convert(SR_tab_tempo[2])
             SR_tab.append(SR_tab_tempo)
             result_jurek.append(result_jurek_tempo)
-            #filter_heiko_tables(open_SR_tab("data/data_emi_normalization/"+str(p)+"_reduced_nitrogen.csv"))
     elif choice_0 == "yes":
         for p in range(first_year,last_year+1):
             SR_tab_tempo = open_SR_tab("data/"+type_pol+"_"+str(p)+".csv")
@@ -324,12 +292,9 @@ def normalization(tab,type_pol,method,first_year_str,last_year_str):
     tc = []
     compteur = 0
     for p in range(first_year,last_year+1):
-        tc_tempo = np.zeros((np.shape(result_jurek[compteur])[0],np.shape(emi_oxidised_nitrogen[compteur])[0]))
-        print(np.shape(result_jurek))
-        print(np.shape(tc_tempo))
+        tc_tempo = np.zeros((np.shape(result_jurek[compteur])))
         tc.append(tc_tempo)
         compteur = compteur + 1
-
 
     """tc_2016 = np.zeros((np.shape(result_2016)))
     tc_2017 = np.zeros((np.shape(result_2017)))
@@ -337,16 +302,10 @@ def normalization(tab,type_pol,method,first_year_str,last_year_str):
     tc_2019 = np.zeros((np.shape(result_2019)))
     tc_2020 = np.zeros((np.shape(result_2020)))"""
     if type_pol == "oxidised_nitrogen" or type_pol == "dry_oxidised_nitrogen" or type_pol == "wet_oxidised_nitrogen":
-        for p in range(len(tc)):
-            for i in range(np.shape(tc[p])[0]):
-                for j in range(np.shape(tc[p][i])[0]):
+        for p in range(np.shape(tc)[0]):
+            for i in range(np.shape(tc)[1]):
+                for j in range(np.shape(tc)[2]):
                     if emi_oxidised_nitrogen[p][j] != 0:
-                        #print(p,i,j)
-                        #print(len(tc))
-                        #print(np.shape(tc[p])[0])
-                        #print(np.shape(tc[p][i])[0])
-                        #print(np.shape(result_jurek))
-
                         tc[p][i][j] = result_jurek[p][i][j]/emi_oxidised_nitrogen[p][j]
                     else:
                         tc[p][i][j] = float("nan")
@@ -668,9 +627,6 @@ if choice_0 == "yes":
         else:
             token_4 = 1
     print("-----------------------------------------------")
-    print("The text file output_SR.txt has been created. It include the SR table based on yours choices.")
-    print("-----------------------------------------------")
-    print("The text file transfer_coef.txt has been created. It include the transfer coef based on yours choices.")
 
 ### The principal routine
 
@@ -747,14 +703,14 @@ elif choice_0 == "no":
             token_2 =1
     if choice_2 == "no":
         print("Select the receptors. Only the Helcom or Ospar receptors")
-        print("The format must be: EEZ48,EEZ65,EEZ71,OR1,HE8")
+        print("The format must be: EEZ48,EEZ65,EEZ71")
         print("Please enter the zones separated by comma with no blanks:")
         str_receptors = input()
     else:
         pass
     print("-----------------------------------------------")
     print("\n")
-    print("Please, select your parameters: dry oxidised nitrogen, wet oxidised nitrogen, dry reduced nitrogen, wet reduced nitrogen ?")
+    print("Please, select your parameters: oxidised nitrogen, dry oxidised nitrogen, wet oxidised nitrogen, reduced nitrogen, dry reduced nitrogen, wet reduced nitrogen ?")
     print("Example: wet oxidised nitrogen")
     print("Please enter without capital letter:")
     token_3 = 0
@@ -789,9 +745,6 @@ elif choice_0 == "no":
         else:
             token_4 = 1
     print("-----------------------------------------------")
-    print("The text file output_SR.txt has been created. It include the SR table based on yours choices.")
-    print("-----------------------------------------------")
-    print("The text file transfer_coef.txt has been created. It include the transfer coef based on yours choices.")
 
 ### Principal routine 2
     if choice_1 == "brute":
@@ -805,4 +758,5 @@ elif choice_0 == "no":
         elif choice_2 == "no":
             making_output_4(fusion_open_SR_table("data/data_jurek_helcom/"+choice_3bis+"_"+choice_4+".csv","data/data_jurek_ospar/"+choice_3bis+"_"+choice_4+".csv"),str_receptors,choice_3bis,choice_4,choice_3bis,choice_1bis,first_year,last_year)
 
+#for annee choisie et with les meteorologies choisies
 #for annee choisie et with les meteorologies choisies
