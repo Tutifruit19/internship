@@ -70,7 +70,13 @@ def fusion_open_SR_table(filename_1,filename_2):
         while result[i][0][l] !=" ":
             l = l+1
         SR_name_receptors.append(result[i][0][:l])
-    return [SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
+    new_SR_name_emitters = []
+    for i in range(1,len(SR_name_emitters)):
+        k=0
+        while SR_name_emitters[i][k] == " ":
+            k=k+1
+        new_SR_name_emitters.append(SR_name_emitters[i][k:])
+    return [new_SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
 
 
 def making_output_3(tab,choice_3bis,choice_4,type_pol,method,first_year,last_year):
@@ -167,6 +173,103 @@ def making_output_2(tab,receptors_name):
             file.write("\n")
         else:
             pass
+
+def filter_heiko_tables(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helcom):
+    heiko_tab = open_SR_tab(path_tab_heiko)
+    jurek_tab = fusion_open_SR_table(path_tab_jurek_helcom,path_tab_jurek_ospar)
+    #print(heiko_tab)
+    #print("------------------")
+    #print(jurek_tab)
+    heiko_result = heiko_tab[2]
+    heiko_sources = heiko_tab[0]
+    jurek_sources = jurek_tab[0]
+    #print(heiko_sources)
+    #print(jurek_sources)
+    anom = []
+    for i in range(len(jurek_sources)):
+        if jurek_sources[i] in heiko_sources:
+            pass
+        else:
+            anom.append(jurek_sources[i])
+    print(anom)
+    non_present_sources = []
+    index_non_present_sources = []
+    for i in range(len(heiko_sources)):
+        if heiko_sources[i] in jurek_sources:
+            pass
+        else:
+            non_present_sources.append(heiko_sources[i])
+            index_non_present_sources.append(i)
+    #print(non_present_sources)
+    #print(heiko_result)
+    new_heiko_result = np.delete(heiko_result,index_non_present_sources[1:],axis=1)
+    new_heiko_sources = np.delete(heiko_sources,index_non_present_sources[1:],axis=0)
+    #print(new_heiko_result)
+    #print(np.shape(jurek_tab[2][2]))
+    #print(np.shape(new_heiko_result))
+    new_heiko_tab = [new_heiko_sources,heiko_tab[1],new_heiko_result]
+    return new_heiko_tab
+
+def unit_normalization(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helcom):
+    adapted_heiko_tab = filter_heiko_tables(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helcom)
+    float_result_jurek = convert(fusion_open_SR_table(path_tab_jurek_helcom,path_tab_jurek_ospar)[2])
+    float_result_heiko = convert(adapted_heiko_tab[2])
+    print(np.shape(float_result_jurek))
+    emission = float_result_heiko[-1][:]
+    print(np.shape(emission))
+    tc = np.zeros((np.shape(float_result_jurek)))
+    for i in range(np.shape(tc)[0]):
+        for j in range(np.shape(tc)[1]):
+            tc[i][j] = float_result_jurek[i][j]/emission[j]
+    #print(np.shape(tc))
+    new_jurek_table = np.zeros((np.shape(float_result_jurek)))
+    for i in range(np.shape(float_result_jurek)[0]):
+        for j in range(np.shape(float_result_jurek)[1]):
+            new_jurek_table[i][j] = tc[i][j]*float_result_jurek[i][j]
+    #print(np.shape(new_jurek_table))
+    return [tc,new_jurek_table]
+
+def normalization_v2(type_pol,method,first_year_str,last_year_str,choice_4):
+    first_year = int(first_year_str)
+    last_year = int(last_year_str)
+    tc = []
+    new_table = []
+    if type_pol == "oxidised_nitrogen" or type_pol == "dry_oxidised_nitrogen" or type_pol == "wet_oxidised_nitrogen":
+        for i in range(first_year,last_year+1):
+            path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
+            path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv"
+            path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv"
+            tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+            new_table.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
+    elif type_pol == "reduced_nitrogen" or type_pol == "dry_reduced_nitrogen" or type_pol == "wet_reduced_nitrogen":
+        for i in range(first_year,last_year+1):
+            print(i)
+            path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
+            path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
+            path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
+            tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+            new_table.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
+    if method == "average":
+        normalized_table = np.zeros((np.shape(new_table)[1:]))
+        for i in range(np.shape(normalized_table)[1]):
+            for j in range(np.shape(normalized_table)[2]):
+                for p in range(np.shape(normalized_table)[0]):
+                    normalized_table[i][j]=normalized_table[i][j]+new_table[p][i][j]
+                normalized_table[i][j] = normalized_table[i][j]/(np.shape(normalized_table)[0])
+    elif method == "median":
+        median_tab = np.empty(np.shape(new_table)[1:],dtype=list)
+        for i in range(np.shape(median_tab)[0]):
+            for j in range(np.shape(median_tab)[1]):
+                median_tab[i][j] = []
+        for i in range(np.shape(median_tab)[0]):
+            for j in range(np.shape(median_tab)[1]):
+                for p in range(np.shape(new_table)[0]):
+                    median_tab[i][j].append(new_table[p][i][j])
+        normalized_table = np.zeros((np.shape(new_table)[1:]))
+        for i in range(np.shape(normalized_table)[0]):
+            for j in range(np.shape(normalized_table)[1]):
+                normalized_table[i][j] = sc.median(median_tab[i][j])
+    print(normalized_table)
 
 def normalization(tab,type_pol,method,first_year_str,last_year_str):
     """emi_reduced_nitrogen_2016 = []
@@ -485,7 +588,8 @@ def normalization(tab,type_pol,method,first_year_str,last_year_str):
 
 #print(normalization(open_SR_tab("/home/aurelienh/task_3and4/data/dry_oxidised_nitrogen_2018.csv"),"oxidised_nitrogen","average"))
 #print(open_SR_tab("/home/aurelienh/task_3and4/data/data_jurek_ospar/wet_oxidised_nitrogen_2007.csv"))
-
+#unit_normalization("data/data_emi_normalization/1995_reduced_nitrogen.csv","data/data_jurek_ospar/wet_reduced_nitrogen_1995.csv","data/data_jurek_helcom/wet_reduced_nitrogen_1995.csv")
+normalization_v2("dry_reduced_nitrogen","average","1999","2010","2002")
 
 ### All Selection before to run the the routine
 print("-----------------------------------------------")
