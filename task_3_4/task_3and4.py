@@ -324,11 +324,11 @@ def normalization(tab,type_pol,method,first_year_str,last_year_str):
     tc = []
     compteur = 0
     for p in range(first_year,last_year+1):
-        tc_tempo = np.zeros((np.shape(result_jurek[compteur])[1],np.shape(emi_oxidised_nitrogen[compteur])[0]))
+        tc_tempo = np.zeros((np.shape(result_jurek[compteur])[0],np.shape(emi_oxidised_nitrogen[compteur])[0]))
+        print(np.shape(result_jurek))
+        print(np.shape(tc_tempo))
         tc.append(tc_tempo)
         compteur = compteur + 1
-    print(len(tc))
-    print(np.shape(emi_oxidised_nitrogen))
 
 
     """tc_2016 = np.zeros((np.shape(result_2016)))
@@ -337,10 +337,16 @@ def normalization(tab,type_pol,method,first_year_str,last_year_str):
     tc_2019 = np.zeros((np.shape(result_2019)))
     tc_2020 = np.zeros((np.shape(result_2020)))"""
     if type_pol == "oxidised_nitrogen" or type_pol == "dry_oxidised_nitrogen" or type_pol == "wet_oxidised_nitrogen":
-        for p in range(np.shape(tc)[0]):
+        for p in range(len(tc)):
             for i in range(np.shape(tc[p])[0]):
-                for j in range(np.shape(tc[p])[1]):
+                for j in range(np.shape(tc[p][i])[0]):
                     if emi_oxidised_nitrogen[p][j] != 0:
+                        #print(p,i,j)
+                        #print(len(tc))
+                        #print(np.shape(tc[p])[0])
+                        #print(np.shape(tc[p][i])[0])
+                        #print(np.shape(result_jurek))
+
                         tc[p][i][j] = result_jurek[p][i][j]/emi_oxidised_nitrogen[p][j]
                     else:
                         tc[p][i][j] = float("nan")
