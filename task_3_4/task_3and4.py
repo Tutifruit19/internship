@@ -180,8 +180,8 @@ def filter_heiko_tables(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helco
     #print(heiko_tab)
     #print("------------------")
     #print(jurek_tab)
-    heiko_result = heiko_tab[2]
-    heiko_sources = heiko_tab[0]
+    heiko_result = convert(heiko_tab[2])
+    heiko_sources = heiko_tab[0][1:]
     jurek_sources = jurek_tab[0]
     #print(heiko_sources)
     #print(jurek_sources)
@@ -191,7 +191,7 @@ def filter_heiko_tables(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helco
             pass
         else:
             anom.append(jurek_sources[i])
-    print(anom)
+    #print(anom)
     non_present_sources = []
     index_non_present_sources = []
     for i in range(len(heiko_sources)):
@@ -202,21 +202,69 @@ def filter_heiko_tables(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helco
             index_non_present_sources.append(i)
     #print(non_present_sources)
     #print(heiko_result)
-    new_heiko_result = np.delete(heiko_result,index_non_present_sources[1:],axis=1)
-    new_heiko_sources = np.delete(heiko_sources,index_non_present_sources[1:],axis=0)
+    new_heiko_result = np.delete(heiko_result,index_non_present_sources,axis=1)
+    new_heiko_sources = np.delete(heiko_sources,index_non_present_sources,axis=0)
     #print(new_heiko_result)
     #print(np.shape(jurek_tab[2][2]))
     #print(np.shape(new_heiko_result))
     new_heiko_tab = [new_heiko_sources,heiko_tab[1],new_heiko_result]
     return new_heiko_tab
 
+def filter_jurek_tables(new_heiko_tab,path_tab_jurek_ospar,path_tab_jurek_helcom):
+    jurek_tab = fusion_open_SR_table(path_tab_jurek_helcom,path_tab_jurek_ospar)
+    jurek_sources = jurek_tab[0]
+    jurek_result = convert(jurek_tab[2])
+    heiko_sources = new_heiko_tab[0]
+    non_present_sources = []
+    index_non_present_sources = []
+    for i in range(len(jurek_sources)):
+        if jurek_sources[i] in heiko_sources:
+            pass
+        else:
+            non_present_sources.append(jurek_sources[i])
+            index_non_present_sources.append(i)
+    #print(index_non_present_sources)
+    new_jurek_result = np.delete(jurek_result,index_non_present_sources,axis=1)
+   # print(np.shape(jurek_result))
+    #print(np.shape(new_jurek_result))
+    new_jurek_sources = np.delete(jurek_sources,index_non_present_sources,axis=0)
+    new_jurek_tab = [new_jurek_sources,jurek_tab[1],new_jurek_result]
+    return new_jurek_tab
+
+def sorting(jurek_tab,heiko_tab):
+    heiko_sources = list(heiko_tab[0])
+    heiko_result = heiko_tab[2]
+    jurek_sources = list(jurek_tab[0])
+    jurek_result = jurek_tab[2]
+    print(np.shape(heiko_result))
+    print(len(heiko_sources))
+    #print(heiko_sources)
+    print(jurek_sources)
+    new_index_heiko = []
+    heiko_sorted_sources = []
+    heiko_sorted_result = convert(heiko_result)
+    for i in range(len(jurek_sources)):
+        new_index_heiko.append(heiko_sources.index(jurek_sources[i]))
+    for i in range(np.shape(heiko_result)[0]):
+        for j in range(np.shape(heiko_result)[1]):
+            heiko_sorted_result[i][j] = heiko_result[i][new_index_heiko[j]]
+    for i in range(len(heiko_sources)):
+        heiko_sorted_sources.append(heiko_sources[new_index_heiko[j]])
+    #print(len(new_index_heiko))
+    #print(len(heiko_sources))
+    #print(np.shape(heiko_result))
+    return [heiko_sorted_sources,heiko_tab[1],heiko_sorted_result]
+
+
 def unit_normalization(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helcom):
     adapted_heiko_tab = filter_heiko_tables(path_tab_heiko,path_tab_jurek_ospar,path_tab_jurek_helcom)
-    float_result_jurek = convert(fusion_open_SR_table(path_tab_jurek_helcom,path_tab_jurek_ospar)[2])
+    new_jurek_tab = filter_jurek_tables(adapted_heiko_tab,path_tab_jurek_ospar,path_tab_jurek_helcom)
+    adapted_sorted_heiko_tab = sorting(new_jurek_tab,adapted_heiko_tab)
+    float_result_jurek = convert(new_jurek_tab[2])
     float_result_heiko = convert(adapted_heiko_tab[2])
-    print(np.shape(float_result_jurek))
+   # print(np.shape(float_result_jurek))
     emission = float_result_heiko[-1][:]
-    print(np.shape(emission))
+   # print(np.shape(emission))
     tc = np.zeros((np.shape(float_result_jurek)))
     for i in range(np.shape(tc)[0]):
         for j in range(np.shape(tc)[1]):
@@ -243,17 +291,19 @@ def normalization_v2(type_pol,method,first_year_str,last_year_str,choice_4):
             new_table.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
     elif type_pol == "reduced_nitrogen" or type_pol == "dry_reduced_nitrogen" or type_pol == "wet_reduced_nitrogen":
         for i in range(first_year,last_year+1):
-            print(i)
+            #print(i)
             path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
             path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
             path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
             tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
             new_table.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
     if method == "average":
-        normalized_table = np.zeros((np.shape(new_table)[1:]))
-        for i in range(np.shape(normalized_table)[1]):
-            for j in range(np.shape(normalized_table)[2]):
-                for p in range(np.shape(normalized_table)[0]):
+        #print(len(new_table))
+        normalized_table = np.zeros((np.shape(new_table[0])))
+        for i in range(np.shape(normalized_table)[0]):
+            for j in range(np.shape(normalized_table)[1]):
+                for p in range(len(new_table)):
+                    print(np.shape(new_table[p]))
                     normalized_table[i][j]=normalized_table[i][j]+new_table[p][i][j]
                 normalized_table[i][j] = normalized_table[i][j]/(np.shape(normalized_table)[0])
     elif method == "median":
