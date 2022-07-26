@@ -90,7 +90,8 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
         for j in range(np.shape(heiko_result)[1]):
             heiko_sorted_result[i][j] = heiko_result[i][new_index_heiko[j]]
     for i in range(len(heiko_sources)):
-        heiko_sorted_sources.append(heiko_sources[new_index_heiko[j]])
+        heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
+    #print(heiko_sorted_sources)
     return [heiko_sorted_sources,heiko_sorted_result]
 
 def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
@@ -143,11 +144,13 @@ def reshape(sources_1,result_1,sources_2,result_2):
     step_2 = filter_jurek_tables(new_sources_1,new_result_1,sources_2,result_2)
     new_sources_2 = step_2[0]
     new_result_2 = step_2[1]
+    #print(new_sources_1)
     step_3 = sorting(list(new_sources_1),new_result_1,list(new_sources_2),new_result_2)
     new2_sources_1 = step_3[0]
     new2_result_1 = step_3[1]
+    #print(new2_sources_1)
+    #print("---------------------")
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
-
 
 
 def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
@@ -169,21 +172,39 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
             path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
             tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
             tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
-
+    #print(tc_sources)
     table_a_normaliser = fusion_open_SR_table("data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv","data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv")
     table_a_normaliser_result = convert(table_a_normaliser[2])
     table_a_normaliser_sources = table_a_normaliser[0]
+    new_list_tc = []
+    new_list_tc_sources = []
+    new_list_table_a_normaliser_sources = []
+    new_list_table_a_normaliser_result = []
     for p in range(len(tc)):
         temp = reshape(tc_sources[p],tc[p],table_a_normaliser_sources,table_a_normaliser_result)
         new_tc_sources = temp[0]
         new_tc = temp[1]
         new_table_a_normaliser_sources = temp[2]
         new_table_a_normaliser_result = temp[3]
-        print(np.shape(new_tc_sources))
+        """print(np.shape(new_tc_sources))
         print(np.shape(new_tc))
         print(np.shape(new_table_a_normaliser_sources))
         print(np.shape(new_table_a_normaliser_result))
-        print('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
+        print('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')"""
+        new_list_tc_sources.append(new_tc_sources)
+        new_list_tc.append(new_tc)
+        new_list_table_a_normaliser_sources.append(new_table_a_normaliser_sources)
+        new_list_table_a_normaliser_result.append(new_table_a_normaliser_result)
+    #print(new_list_tc_sources)
+    #print(new_list_tc)
+    for i in range(len(new_list_tc_sources)):
+        print(len(new_list_tc_sources[i]))
+    for i in range(len(new_list_tc)):
+        print(np.shape(new_list_tc[i]))
+    for i in range(len(new_list_table_a_normaliser_sources)):
+        print(np.shape(new_list_table_a_normaliser_sources[i]))
+    for i in range(len(new_list_table_a_normaliser_result)):
+        print(np.shape(new_list_table_a_normaliser_result[i]))
 
 
 
