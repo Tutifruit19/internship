@@ -91,7 +91,6 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
             heiko_sorted_result[i][j] = heiko_result[i][new_index_heiko[j]]
     for i in range(len(heiko_sources)):
         heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
-    #print(heiko_sorted_sources)
     return [heiko_sorted_sources,heiko_sorted_result]
 
 def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
@@ -128,15 +127,6 @@ def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
                 tc[i][j] = final_jurek_result[i][j]/emi[j]
     return [final_jurek_sources,tc]
 
-
-
-    """print(np.shape(final_jurek_sources))
-    print(np.shape(final_heiko_sources))
-    print('------')
-    print(np.shape(final_jurek_result))
-    print(np.shape(final_heiko_result))
-    print('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')"""
-
 def reshape(sources_1,result_1,sources_2,result_2):
     step_1 = filter_heiko_tables(sources_1,result_1,sources_2,result_2)
     new_sources_1 = step_1[0]
@@ -144,14 +134,10 @@ def reshape(sources_1,result_1,sources_2,result_2):
     step_2 = filter_jurek_tables(new_sources_1,new_result_1,sources_2,result_2)
     new_sources_2 = step_2[0]
     new_result_2 = step_2[1]
-    #print(new_sources_1)
     step_3 = sorting(list(new_sources_1),new_result_1,list(new_sources_2),new_result_2)
     new2_sources_1 = step_3[0]
     new2_result_1 = step_3[1]
-    #print(new2_sources_1)
-    #print("---------------------")
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
-
 
 def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
     first_year = int(first_year_str)
@@ -172,7 +158,6 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
             path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
             tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
             tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
-    #print(tc_sources)
     table_a_normaliser = fusion_open_SR_table("data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv","data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv")
     table_a_normaliser_result = convert(table_a_normaliser[2])
     table_a_normaliser_sources = table_a_normaliser[0]
@@ -186,26 +171,27 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
         new_tc = temp[1]
         new_table_a_normaliser_sources = temp[2]
         new_table_a_normaliser_result = temp[3]
-        """print(np.shape(new_tc_sources))
-        print(np.shape(new_tc))
-        print(np.shape(new_table_a_normaliser_sources))
-        print(np.shape(new_table_a_normaliser_result))
-        print('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')"""
         new_list_tc_sources.append(new_tc_sources)
         new_list_tc.append(new_tc)
         new_list_table_a_normaliser_sources.append(new_table_a_normaliser_sources)
         new_list_table_a_normaliser_result.append(new_table_a_normaliser_result)
-    #print(new_list_tc_sources)
-    #print(new_list_tc)
-    for i in range(len(new_list_tc_sources)):
-        print(len(new_list_tc_sources[i]))
-    for i in range(len(new_list_tc)):
-        print(np.shape(new_list_tc[i]))
-    for i in range(len(new_list_table_a_normaliser_sources)):
-        print(np.shape(new_list_table_a_normaliser_sources[i]))
-    for i in range(len(new_list_table_a_normaliser_result)):
-        print(np.shape(new_list_table_a_normaliser_result[i]))
+    normalized_table = []
+    for p in range(len(new_list_table_a_normaliser_result)):
+        tempo = np.zeros((np.shape(new_list_table_a_normaliser_result[p])))
+        for i in range(np.shape(tempo)[0]):
+            for j in range(np.shape(tempo)[1]):
+                tempo[i][j] = new_list_tc[p][i][j]*new_list_table_a_normaliser_result[p][i][j]
+        normalized_table.append(tempo)
+    return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,table_a_normaliser[1]]
 
+def making_output(namelist_emitters,namelist_soures,result):
+    file = open("output_SR.txt","w")
+    file.write("\n")
+    file = open("output_SR.txt","a")
+    #Ecriture de la premiere ligne c'est a dire les sources:
+    file.write("\t")
+    file.write("\t")
+    for i in range(len(name_list_sources)):
 
 
 
