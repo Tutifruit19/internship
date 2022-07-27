@@ -185,7 +185,7 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
     #print(new_list_table_a_normaliser_sources)
     return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,table_a_normaliser[1]]
 
-def moyenne(tab_sources,tab_result,tab_receptors):
+def mean(tab_sources,tab_result,tab_receptors):
     list_all_sources = []
     list_position = []
     for p in range(len(tab_sources)):
@@ -212,21 +212,33 @@ def moyenne(tab_sources,tab_result,tab_receptors):
     for i in range(np.shape(tab_moyenne)[0]):
         for j in range(np.shape(tab_moyenne)[1]):
             tab_moyenne[i][j] = tab_moyenne[i][j]/len(list_position[j])
-    return [list_all_sources,tab_moyenne]
+    return [list_all_sources,tab_moyenne,tab_receptors]
 
-
-
-"""def making_output(namelist_emitters,namelist_soures,result):
+def making_output(namelist_receptors,namelist_sources,result):
     file = open("output_SR.txt","w")
     file.write("\n")
     file = open("output_SR.txt","a")
     #Ecriture de la premiere ligne c'est a dire les sources:
     file.write("\t")
-    file.write("\t")
-    for i in range(len(name_list_sources)):"""
+    #file.write("\t")
+    for i in range(len(namelist_sources)):
+        file.write(namelist_sources[i])
+        file.write("\t")
+    #Ecriture du tableau et en prmiere colonne les recepteurs
+    file.write("\n")
+    for i in range(np.shape(result)[0]):
+        for j in range(np.shape(result)[1]+1):
+            if j == 0:
+                file.write(namelist_receptors[i])
+                file.write("\t")
+            else:
+                file.write(str(result[i][j-1]))
+                file.write("\t")
+        file.write("\n")
 
 
 
-A=normalization("dry_oxidised_nitrogen","average","2016","2020","2019")
-B=moyenne(A[2],A[3],A[4])
-print(B)
+A=normalization("wet_reduced_nitrogen","average","2016","2020","2019")
+B=mean(A[2],A[3],A[4])
+making_output(B[2],B[0],B[1])
+#print(B)
