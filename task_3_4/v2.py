@@ -182,17 +182,51 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
             for j in range(np.shape(tempo)[1]):
                 tempo[i][j] = new_list_tc[p][i][j]*new_list_table_a_normaliser_result[p][i][j]
         normalized_table.append(tempo)
+    #print(new_list_table_a_normaliser_sources)
     return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,table_a_normaliser[1]]
 
-def making_output(namelist_emitters,namelist_soures,result):
+def moyenne(tab_sources,tab_result,tab_receptors):
+    list_all_sources = []
+    list_position = []
+    for p in range(len(tab_sources)):
+        for i in range(len(tab_sources[p])):
+            if tab_sources[p][i] in list_all_sources:
+                pass
+            else:
+                list_all_sources.append(tab_sources[p][i])
+    #list_index_sources = np.zeros((len(tab_sources),len(list_all_sources)))
+    for k in range(len(list_all_sources)):
+        temp = []
+        for p in range(len(tab_sources)):
+            if list_all_sources[k] in tab_sources[p]:
+                temp.append(p)
+            else:
+                pass
+        list_position.append(temp)
+    tab_moyenne = np.zeros((len(tab_receptors),len(list_all_sources)))
+    for j in range(len(list_position)):
+        for k in range(len(list_position[j])):
+            for i in range(len(tab_receptors)):
+                ind = list(tab_sources[list_position[j][k]]).index(list_all_sources[j])
+                tab_moyenne[i][j] = tab_moyenne[i][j] + tab_result[list_position[j][k]][i][ind]
+    for i in range(np.shape(tab_moyenne)[0]):
+        for j in range(np.shape(tab_moyenne)[1]):
+            tab_moyenne[i][j] = tab_moyenne[i][j]/len(list_position[j])
+    return [list_all_sources,tab_moyenne]
+
+
+
+"""def making_output(namelist_emitters,namelist_soures,result):
     file = open("output_SR.txt","w")
     file.write("\n")
     file = open("output_SR.txt","a")
     #Ecriture de la premiere ligne c'est a dire les sources:
     file.write("\t")
     file.write("\t")
-    for i in range(len(name_list_sources)):
+    for i in range(len(name_list_sources)):"""
 
 
 
-normalization("dry_reduced_nitrogen","average","1999","2010","2002")
+A=normalization("dry_oxidised_nitrogen","average","2016","2020","2019")
+B=moyenne(A[2],A[3],A[4])
+print(B)
