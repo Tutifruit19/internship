@@ -214,6 +214,38 @@ def mean(tab_sources,tab_result,tab_receptors):
             tab_moyenne[i][j] = tab_moyenne[i][j]/len(list_position[j])
     return [list_all_sources,tab_moyenne,tab_receptors]
 
+def median(tab_sources,tab_result,tab_receptors):
+    list_all_sources = []
+    list_position = []
+    for p in range(len(tab_sources)):
+        for i in range(len(tab_sources[p])):
+            if tab_sources[p][i] in list_all_sources:
+                pass
+            else:
+                list_all_sources.append(tab_sources[p][i])
+    #list_index_sources = np.zeros((len(tab_sources),len(list_all_sources)))
+    for k in range(len(list_all_sources)):
+        temp = []
+        for p in range(len(tab_sources)):
+            if list_all_sources[k] in tab_sources[p]:
+                temp.append(p)
+            else:
+                pass
+        list_position.append(temp)
+    tab_median = np.empty((len(tab_receptors),len(list_all_sources)),dtype=list)
+    for i in range(np.shape(tab_median)[0]):
+        for j in range(np.shape(tab_median)[1]):
+            tab_median[i][j] = []
+    for j in range(len(list_position)):
+        for k in range(len(list_position[j])):
+            for i in range(len(tab_receptors)):
+                ind = list(tab_sources[list_position[j][k]]).index(list_all_sources[j])
+                tab_median[i][j].append(tab_result[list_position[j][k]][i][ind])
+    for i in range(np.shape(tab_median)[0]):
+        for j in range(np.shape(tab_median)[1]):
+            tab_median[i][j] = sc.median(tab_median[i][j])
+    return [list_all_sources,tab_median,tab_receptors]
+
 def making_output(namelist_receptors,namelist_sources,result):
     file = open("output_SR.txt","w")
     file.write("\n")
@@ -239,6 +271,6 @@ def making_output(namelist_receptors,namelist_sources,result):
 
 
 A=normalization("wet_reduced_nitrogen","average","2016","2020","2019")
-B=mean(A[2],A[3],A[4])
+B=median(A[2],A[3],A[4])
 making_output(B[2],B[0],B[1])
 #print(B)
