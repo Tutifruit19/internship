@@ -100,10 +100,14 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
         heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
     return [heiko_sorted_sources,heiko_sorted_result]
 
-def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
+def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar,choice_1):
     #traitement des donnees
-    heiko_tab = open_SR_tab(path_heiko)
-    jurek_tab = fusion_open_SR_table(path_jurek_helcom,path_jurek_ospar)
+    if choice_1 == "1":
+        heiko_tab = open_SR_tab(path_heiko)
+        jurek_tab = fusion_open_SR_table(path_jurek_helcom,path_jurek_ospar)
+    elif choice_2 == "2":
+        heiko_tab = open_SR_tab(path_heiko)
+        jurek_tab = open_SR_tab(path_jurek_helcom)
     heiko_sources = heiko_tab[0][1:]
     jurek_sources = jurek_tab[0]
     heiko_result = convert(heiko_tab[2])
@@ -146,7 +150,7 @@ def reshape(sources_1,result_1,sources_2,result_2):
     new2_result_1 = step_3[1]
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
 
-def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
+def normalization(type_pol,method,first_year_str,last_year_str,choice_4,choice_1):
     first_year = int(first_year_str)
     last_year = int(last_year_str)
     tc = []
@@ -156,21 +160,33 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
             if i == 2015:
                 pass
             else:
-                path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
-                path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
-                path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
-                tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
-                tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+                if choice_1 == "1":
+                    path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
+                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
+                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar,choice_1)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar,choice_1)[0])
+                elif choice_1 == "2":
+                    path_heiko = "data/oxidised_nitrogen_"+str(i)+".csv"
+                    path_jurek = "data/"+type_pol+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek,"useless",choice_1)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek,"useless",choice_1)[0])
     elif type_pol == "reduced_nitrogen" or type_pol == "dry_reduced_nitrogen" or type_pol == "wet_reduced_nitrogen":
         for i in range(first_year,last_year+1):
             if i == 2015:
                 pass
             else:
-                path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
-                path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
-                path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
-                tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
-                tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+                if choice_1 == "1":
+                    path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
+                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
+                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar,choice_1)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar,choice_1)[0])
+                elif choice_1 == "2":
+                    path_heiko = "data/reduced_nitrogen_"+str(i)+".csv"
+                    path_jurek = "data/"+type_pol+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek,"useless",choice_1)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek,"useless",choice_1)[0])
     table_a_normaliser = fusion_open_SR_table("data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv","data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv")
     table_a_normaliser_result = convert(table_a_normaliser[2])
     table_a_normaliser_sources = table_a_normaliser[0]
@@ -394,7 +410,8 @@ if choice_1 == "1":
             token_7 = 0
         else:
             token_7 = 1
-    A = normalization(choice_5,choice_2,first_year,last_year,choice_6)
+
+    A = normalization(choice_5,choice_2,first_year,last_year,choice_6,choice_1)
     if choice_2 == "average":
         B = mean(A[2],A[3],A[4])
     elif choice_2 == "median":
@@ -409,4 +426,96 @@ if choice_1 == "1":
         making_output(B[2],B[0],B[1],"output_SR.txt")
         for i in range(len(A[0])):
             making_output(A[4],A[0][i],A[1][i],"output_TC_"+str(int(first_year)+i)+".txt")
-#elif choice_1 == "2":
+
+elif choice_1 == "2":
+    print("What method do you want for the normalization. (average/median)")
+    print("Please, select 1 or 2:")
+    print("1: average")
+    print("2: median")
+    token_2 = 0
+    while token_2 == 0:
+        choice_2 = input()
+        if choice_2 !="1" and choice_2 !="2":
+            print("Incorrect input, please retry:")
+            token_2 = 0
+        else:
+            token_2=1
+    if choice_2 == "1":
+        choice_2 = "average"
+    elif choice_2 == "2":
+        choice_2 = "median"
+    print("------------------------------------")
+    print("Please, select the first year that you want for normalization. (between 2016 and 2020) ")
+    token_3 = 0
+    while token_3 == 0:
+        first_year = input()
+        if int(first_year) <2016 or int(first_year) > 2020:
+            print("Incorrect input, please retry:")
+            token_3 = 0
+        else:
+            token_3 = 1
+    print("Please, select the first year that you want for normalization. (between 1995 and 2020 and > first year)")
+    token_4 = 0
+    while token_4 ==0:
+        last_year = input()
+        if int(last_year) <2016 or int(last_year) > 2020 or int(last_year)<int(first_year):
+            print("Incorrect input, please retry:")
+            token_4 = 0
+        else:
+            token_4 = 1
+    print("------------------------------------")
+    print("Please select the parameter that you want: (select 1,2,3,4,5 or 6)")
+    print("1: dry reduced nitrogen")
+    print("2: wet reduced nitrogen")
+    print("3: dry oxidised nitrogen")
+    print("4: wet oxidised nitrogen")
+    print("5: reduced nitrogen")
+    print("6: oxidised nitrogen")
+    token_5 = 0
+    while token_5 ==0:
+        choice_5 = input()
+        if choice_5 != "1" and choice_5 != "2" and choice_5 != "3" and choice_5 != "4" and choice_5 != "5" and choice_5 != "6":
+            print("Incorrect input, please retry:")
+            token_5 = 0
+        else:
+            token_5 = 1
+    if choice_5 == "1":
+        choice_5 = "dry_reduced_nitrogen"
+    elif choice_5 == "2":
+        choice_5 = "wet_reduced_nitrogen"
+    elif choice_5 == "3":
+        choice_5 = "dry_oxidised_nitrogen"
+    elif choice_5 == "4":
+        choice_5 = "wet_oxidised_nitrogen"
+    elif choice_5 == "5":
+        choice_5 = "reduced_nitrogen"
+    elif choice_5 == "6":
+        choice_5 = "oxidised_nitrogen"
+    print("------------------------------------")
+    print("Please select the year to normalize between 2016 and 2020:")
+    print("Example: 2017")
+    token_6 = 0
+    while token_6 == 0:
+        choice_6 = input()
+        if int(choice_6) < 2016 or int(choice_6)> 2020:
+            print("Incorrect input, please retry:")
+            token_6 = 0
+        else:
+            token_6 = 1
+    print("------------------------------------")
+    print("What kind of output do you want ? (Please select your(s) output(s)")
+    print("1: the normalized SR table (output_SR.txt)")
+    print("2: all transfer coefficients (output_TC_year.txt)")
+    print("3: the normalized SR table and all transfer coefficients (output_SR.txt and output_TC.txt)")
+    token_7 = 0
+    while token_7 == 0:
+        choice_7 = input()
+        if choice_7 != "1" and choice_7 != "2" and choice_7 != "3":
+            print("Incorrect input, please retry:")
+            token_7 = 0
+        else:
+            token_7 = 1
+
+    ###executer les fonction en fonction des selecteurs pour faire les sorties:
+
+
