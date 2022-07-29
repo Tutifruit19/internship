@@ -1,3 +1,10 @@
+"""
+This program make a normalization for the SR tables between 1995 and 2020 (you can select the first year and the last year for the normalization, the method for the normalization) and the year that you want to normalize.
+Author: Henon Aurelien (meteo france), aurelien.henon@meteo.fr
+Date: 2022
+
+"""
+
 import os
 import csv
 import numpy as np
@@ -252,10 +259,10 @@ def median(tab_sources,tab_result,tab_receptors):
             tab_median[i][j] = sc.median(tab_median[i][j])
     return [list_all_sources,tab_median,tab_receptors]
 
-def making_output(namelist_receptors,namelist_sources,result):
-    file = open("output_SR.txt","w")
+def making_output(namelist_receptors,namelist_sources,result,filename):
+    file = open(filename,"w")
     file.write("\n")
-    file = open("output_SR.txt","a")
+    file = open(filename,"a")
     #Ecriture de la premiere ligne c'est a dire les sources:
     file.write("\t")
     #file.write("\t")
@@ -375,10 +382,31 @@ if choice_1 == "1":
         else:
             token_6 = 1
     print("------------------------------------")
+    print("What kind of output do you want ? (Please select your(s) output(s)")
+    print("1: the normalized SR table (output_SR.txt)")
+    print("2: all transfer coefficients (output_TC_year.txt)")
+    print("3: the normalized SR table and all transfer coefficients (output_SR.txt and output_TC.txt)")
+    token_7 = 0
+    while token_7 == 0:
+        choice_7 = input()
+        if choice_7 != "1" and choice_7 != "2" and choice_7 != "3":
+            print("Incorrect input, please retry:")
+            token_7 = 0
+        else:
+            token_7 = 1
     A = normalization(choice_5,choice_2,first_year,last_year,choice_6)
     if choice_2 == "average":
         B = mean(A[2],A[3],A[4])
     elif choice_2 == "median":
         B = median(A[2],A[3],A[4])
-    making_output(B[2],B[0],B[1])
+
+    if choice_7 == "1":
+        making_output(B[2],B[0],B[1],"output_SR.txt")
+    elif choice_7 == "2":
+        for i in range(len(A[0])):
+            making_output(A[4],A[0][i],A[1][i],"output_TC_"+str(int(first_year)+i)+".txt")
+    elif choice_7 == "3":
+        making_output(B[2],B[0],B[1],"output_SR.txt")
+        for i in range(len(A[0])):
+            making_output(A[4],A[0][i],A[1][i],"output_TC_"+str(int(first_year)+i)+".txt")
 #elif choice_1 == "2":
