@@ -269,8 +269,109 @@ def making_output(namelist_receptors,namelist_sources,result):
         file.write("\n")
 
 
-
-A=normalization("wet_reduced_nitrogen","average","2016","2020","2019")
-B=median(A[2],A[3],A[4])
-making_output(B[2],B[0],B[1])
+#A=normalization("wet_reduced_nitrogen","average","2016","2020","2019")
+#B=median(A[2],A[3],A[4])
+#making_output(B[2],B[0],B[1])
 #print(B)
+
+### Selectors:
+
+print("This program make a normalization for the SR tables between 1995 and 2020 (you can select the first year and the last year for the normalization, the method for the normalization) and the year that you want to normalize.")
+print("Author: Henon Aurelien, aurelien.henon@meteo.fr, 2022")
+print("------------------------------------")
+print("You can use a normalization between 1995 and 2020 with Heiko's tables and Jurek's tables or a normalization between 2016 and 2020 with Michael's tables.")
+print("1: 1995-2020")
+print("2: 2016-2020")
+print("Please make a choice: ")
+token_1 = 0
+while token_1 ==0:
+    choice_1 = input()
+    if choice_1 != "1" and choice_1 !="2":
+        print("Incorrect input, please retry:")
+        token_1 = 0
+    else:
+        token_1 = 1
+print("------------------------------------")
+if choice_1 == "1":
+    print("What method do you want for the normalization. (average/median)")
+    print("Please, select 1 or 2:")
+    print("1: average")
+    print("2: median")
+    token_2 = 0
+    while token_2 == 0:
+        choice_2 = input()
+        if choice_2 !="1" and choice_2 !="2":
+            print("Incorrect input, please retry:")
+            token_2 = 0
+        else:
+            token_2=1
+    if choice_2 == "1":
+        choice_2 = "average"
+    elif choice_2 == "2":
+        choice_2 = "median"
+    print("------------------------------------")
+    print("Please, select the first year that you want for normalization. (between 1995 and 2020) ")
+    token_3 = 0
+    while token_3 == 0:
+        first_year = input()
+        if int(first_year) <1995 or int(first_year) > 2020:
+            print("Incorrect input, please retry:")
+            token_3 = 0
+        else:
+            token_3 = 1
+    print("Please, select the first year that you want for normalization. (between 1995 and 2020 and > first year)")
+    token_4 = 0
+    while token_4 ==0:
+        last_year = input()
+        if int(last_year) <1995 or int(last_year) > 2020 or int(last_year)<int(first_year):
+            print("Incorrect input, please retry:")
+            token_4 = 0
+        else:
+            token_4 = 1
+    print("------------------------------------")
+    print("Please select the parameter that you want: (select 1,2,3,4,5 or 6)")
+    print("1: dry reduced nitrogen")
+    print("2: wet reduced nitrogen")
+    print("3: dry oxidised nitrogen")
+    print("4: wet oxidised nitrogen")
+    print("5: reduced nitrogen")
+    print("6: oxidised nitrogen")
+    token_5 = 0
+    while token_5 ==0:
+        choice_5 = input()
+        if choice_5 != "1" and choice_5 != "2" and choice_5 != "3" and choice_5 != "4" and choice_5 != "5" and choice_5 != "6":
+            print("Incorrect input, please retry:")
+            token_5 = 0
+        else:
+            token_5 = 1
+    if choice_5 == "1":
+        choice_5 = "dry_reduced_nitrogen"
+    elif choice_5 == "2":
+        choice_5 = "wet_reduced_nitrogen"
+    elif choice_5 == "3":
+        choice_5 = "dry_oxidised_nitrogen"
+    elif choice_5 == "4":
+        choice_5 = "wet_oxidised_nitrogen"
+    elif choice_5 == "5":
+        choice_5 = "reduced_nitrogen"
+    elif choice_5 == "6":
+        choice_5 = "oxidised_nitrogen"
+    print("------------------------------------")
+    print("Please select the year to normalize between 1995 and 2020:")
+    print("Example: 2005")
+    token_6 = 0
+    while token_6 == 0:
+        choice_6 = input()
+        if int(choice_6) < 1995 or int(choice_6)> 2020:
+            print("Incorrect input, please retry:")
+            token_6 = 0
+        else:
+            token_6 = 1
+    print("------------------------------------")
+    A = normalization(choice_5,choice_2,first_year,last_year,choice_6)
+    if choice_2 == "average":
+        B = mean(A[2],A[3],A[4])
+    elif choice_2 == "median":
+        B = median(A[2],A[3],A[4])
+    making_output(B[2],B[0],B[1])
+#elif choice_1 == "2":
