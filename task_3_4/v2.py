@@ -1,27 +1,46 @@
 """
 This program make a normalization for the SR tables between 1995 and 2020 (you can select the first year and the last year for the normalization, the method for the normalization) and the year that you want to normalize.
-Author: Henon Aurelien (meteo france), aurelien.henon@meteo.fr
+Author: Henon Aurelien, aurelien.henon@meteo.fr
 Date: 2022
 
 """
-
+### Different import: You need to install them before.
 import os
 import csv
 import numpy as np
 import statistics as sc
 
+### All function that the program need.
+
 def open_SR_tab(filename):
+    """
+    input:
+    - filename: the path of a SR table that you want to open
+    return:
+    -list with:
+        SR_name_sources: A list with the different sources
+        SR_name_receptors: A list with the different receptors
+        result: the tab with values
+        filename: the path associate to the table
+    """
     result=[]
     with open(filename) as data:
         for line in csv.reader(data):
             result.append(line[0].split("\t"))
-    SR_name_emitters = result[0]
+    SR_name_sources = result[0]
     SR_name_receptors =[]
     for i in range(1,np.shape(result)[0]):
         SR_name_receptors.append(result[i][0])
-    return [SR_name_emitters,SR_name_receptors,result,filename]
+    return [SR_name_sources,SR_name_receptors,result,filename]
 
 def fusion_open_SR_table(filename_1,filename_2):
+    """
+    Do the same as the function open_SR_tab but for the jurek's SR tab.
+    In fact there are two Jurek's tab (one with OSPAR receptors and one with the HELCOM receptors).
+    We need to merge the two
+    return:
+    -the same list than open_SR_tab with the merge
+    """
     result=[]
     with open(filename_1) as data:
         for line in csv.reader(data):
@@ -50,6 +69,13 @@ def fusion_open_SR_table(filename_1,filename_2):
     return [new_SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
 
 def convert(tab):
+    """
+    After open the SR tab the values are in tab but there are strings. So we need to keep just the values and transform the string into float.
+    input:
+    - tab: the third element of the return of function open_SR_tab or fusion_open_SR_table.
+    return:
+    - the new float tab
+    """
     float_tab = np.zeros((np.shape(tab)[0]-1,np.shape(tab)[1]-1))
     for i in range(1,np.shape(tab)[0]):
         for j in range(1,np.shape(tab)[1]):
@@ -60,6 +86,19 @@ def convert(tab):
     return float_tab
 
 def filter_heiko_tables(heiko_sources,heiko_result,jurek_sources,jurek_result):
+    """
+    We use heiko's tab to have emissions for the normalization and jurek's tab for the rest.
+    But the sources are not the same between the two and even between heiko's tab. (sources depend of the year)
+    We need to filter the heiko's tab. If a source is in the heiko's tab but not in the jurek's tab we delete the column.
+    This routine is made just for one year so after we will do that for all the year (in a different function)
+    input:
+    - heiko_sources: the first element of the return of the function open_SR_tab for the heiko's SR tab that you want
+    - heiko_result: the third element of the return of the function open_SR_tab for the heiko's SR tab that you want
+    - jurek_sources: the first element of the return of the function fusion_open_SR_table for the jurek's SR tab that you want
+    - jurek_result: the third element of the return of the function fusion_open_SR_table for the jurek's SR tab that you want
+    return:
+    - the heiko tab without sources which are not in the jurek's tab. We assume that we return the the value tab
+    """
     non_present_sources = []
     index_non_present_sources = []
     for i in range(len(heiko_sources)):
@@ -468,8 +507,5 @@ if choice_1 == "y":
         making_output(B[2],B[0],B[1],"output_SR.txt")
         for i in range(len(A[0])):
             making_output(A[4],A[0][i],A[1][i],"output_TC_"+str(int(first_year)+i)+".txt")
-
-
-    ###executer les fonction en fonction des selecteurs pour faire les sorties:
 
 
