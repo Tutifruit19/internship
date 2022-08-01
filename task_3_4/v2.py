@@ -151,30 +151,89 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
     first_year = int(first_year_str)
     last_year = int(last_year_str)
     tc = []
+    tc_bis = []
     tc_sources=[]
     if type_pol == "oxidised_nitrogen" or type_pol == "dry_oxidised_nitrogen" or type_pol == "wet_oxidised_nitrogen":
         for i in range(first_year,last_year+1):
             if i == 2015:
                 pass
             else:
-                path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
-                path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
-                path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
-                tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
-                tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+                if type_pol == "oxidised_nitrogen":
+                    path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
+                    path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_oxidised_nitrogen"+"_"+str(i)+".csv"
+                    path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_oxidised_nitrogen"+"_"+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[0])
+                    path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
+                    path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
+                    tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
+                else:
+                    path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
+                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
+                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+        if type_pol == "oxidised_nitrogen":
+            for k in range(len(tc)):
+                for i in range(np.shape(tc[k])[0]):
+                    for j in range(np.shape(tc[k])[1]):
+                        tc[k][i][j] = tc[k][i][j] + tc_bis[k][i][j]
+        else:
+            pass
     elif type_pol == "reduced_nitrogen" or type_pol == "dry_reduced_nitrogen" or type_pol == "wet_reduced_nitrogen":
         for i in range(first_year,last_year+1):
             if i == 2015:
                 pass
             else:
-                path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
-                path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
-                path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
-                tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
-                tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
-    table_a_normaliser = fusion_open_SR_table("data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv","data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv")
-    table_a_normaliser_result = convert(table_a_normaliser[2])
-    table_a_normaliser_sources = table_a_normaliser[0]
+                if type_pol == "reduced_nitrogen":
+                    path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
+                    path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_reduced_nitrogen"+"_"+str(i)+".csv"
+                    path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_reduced_nitrogen"+"_"+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[0])
+                    path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
+                    path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
+                    tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
+                else:
+                    path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
+                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
+                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
+                    tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
+                    tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+        if type_pol == "reduced_nitrogen":
+            for k in range(len(tc)):
+                for i in range(np.shape(tc[k])[0]):
+                    for j in range(np.shape(tc[k])[1]):
+                        tc[k][i][j] = tc[k][i][j] + tc_bis[k][i][j]
+        else:
+            pass
+    if type_pol == "oxidised_nitrogen":
+        table_a_normaliser_1 = fusion_open_SR_table("data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+choice_4+".csv")
+        table_a_normaliser_2 = fusion_open_SR_table("data/data_jurek_helcom/"+"dry_oxidised_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"dry_oxidised_nitrogen"+"_"+choice_4+".csv")
+        table_a_normaliser_result_1 = convert(table_a_normaliser_1[2])
+        table_a_normaliser_result_2 = convert(table_a_normaliser_2[2])
+        for i in range(np.shape(table_a_normaliser_result_1)[0]):
+            for j in range(np.shape(table_a_normaliser_result_1)[1]):
+                table_a_normaliser_result_1[i][j] = table_a_normaliser_result_1[i][j] + table_a_normaliser_result_2[i][j]
+        table_a_normaliser_result = table_a_normaliser_result_1
+        table_a_normaliser_sources = table_a_normaliser_1[0]
+        receptors = table_a_normaliser_1[1]
+    elif type_pol == "reduced_nitrogen":
+        table_a_normaliser_1 = fusion_open_SR_table("data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+choice_4+".csv")
+        table_a_normaliser_2 = fusion_open_SR_table("data/data_jurek_helcom/"+"dry_reduced_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"dry_reduced_nitrogen"+"_"+choice_4+".csv")
+        table_a_normaliser_result_1 = convert(table_a_normaliser_1[2])
+        table_a_normaliser_result_2 = convert(table_a_normaliser_2[2])
+        for i in range(np.shape(table_a_normaliser_result_1)[0]):
+            for j in range(np.shape(table_a_normaliser_result_1)[1]):
+                table_a_normaliser_result_1[i][j] = table_a_normaliser_result_1[i][j] + table_a_normaliser_result_2[i][j]
+        table_a_normaliser_result = table_a_normaliser_result_1
+        table_a_normaliser_sources = table_a_normaliser_1[0]
+        receptors = table_a_normaliser_1[1]
+    else:
+        table_a_normaliser = fusion_open_SR_table("data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv","data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv")
+        table_a_normaliser_result = convert(table_a_normaliser[2])
+        table_a_normaliser_sources = table_a_normaliser[0]
+        receptors = table_a_normaliser[1]
     new_list_tc = []
     new_list_tc_sources = []
     new_list_table_a_normaliser_sources = []
@@ -197,7 +256,7 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
                 tempo[i][j] = new_list_tc[p][i][j]*new_list_table_a_normaliser_result[p][i][j]
         normalized_table.append(tempo)
     #print(new_list_table_a_normaliser_sources)
-    return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,table_a_normaliser[1]]
+    return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,receptors]
 
 def mean(tab_sources,tab_result,tab_receptors):
     list_all_sources = []
