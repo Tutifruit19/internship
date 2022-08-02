@@ -97,7 +97,7 @@ def filter_heiko_tables(heiko_sources,heiko_result,jurek_sources,jurek_result):
     - jurek_sources: the first element of the return of the function fusion_open_SR_table for the jurek's SR tab that you want
     - jurek_result: the third element of the return of the function fusion_open_SR_table for the jurek's SR tab that you want
     return:
-    - the heiko tab without sources which are not in the jurek's tab. We assume that we return the the value tab
+    - A list with heiko tab and sources. First element is the filtered sources and second element is the filtered value tab.
     """
     non_present_sources = []
     index_non_present_sources = []
@@ -113,6 +113,18 @@ def filter_heiko_tables(heiko_sources,heiko_result,jurek_sources,jurek_result):
     return new_heiko_tab
 
 def filter_jurek_tables(heiko_sources,heiko_result,jurek_sources,jurek_result):
+    """
+    When the heiko's table have just the jure's sources it still some sources in jurek's tab that aren't in the heiko's tab.
+    So we need to filter the jurek's tab.
+    This function do the same as filter_heiko_tables:
+    input:
+    - heiko_sources: the first element of the return of the function filter_heiko_tables
+    - heiko_result: the second element of the return of the function filter_heiko_tables
+    - jurek_sources: the first element of the return of the function fusion_open_SR_table for the jurek's SR tab that you want.
+    - jurek_result: the third element of the return of the function fusion_open_SR_table for the jurek's SR tab that you want.
+    return:
+    - A list with jurek's tab and sources. First element is the filtered sources and second element is the filtered value tab.
+    """
     non_present_sources = []
     index_non_present_sources = []
     for i in range(len(jurek_sources)):
@@ -127,6 +139,18 @@ def filter_jurek_tables(heiko_sources,heiko_result,jurek_sources,jurek_result):
     return new_jurek_tab
 
 def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
+    """
+    Now, we applied the function filter_heiko_tables on heiko's tab and the function filter_jurek_tables on the jurek's tab.
+    We need to be sure if the sources are in the same order in the jurek's tab than in the heiko's tab.
+    This function re order the tab.
+    input:
+    - heiko_sources: the first element of the return of the function filter_heiko_tables.
+    - heiko_result: the second element of the return of the function flter_heiko_tables.
+    - jurek_sources: the first element of the return of the function filter_jurek_tables.
+    - jurek_result: the second element of the return of the function flter_jurek_tables.
+    return:
+    - A list with heiko's tab and sources. The heiko tab is now sorted to fit with the jure's tab. First element is the filtered sources and second element is the filtered value tab.
+    """
     new_index_heiko = []
     heiko_sorted_sources = []
     heiko_sorted_result = heiko_result
@@ -140,6 +164,20 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
     return [heiko_sorted_sources,heiko_sorted_result]
 
 def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
+    """
+    Do the transfer coefficient tab for just one year.
+    Before this function applies the function open_SR_tab, fusion_open_SR_tables and convert. After this function applies filter_heiko_tab and filter_jurek_tab.
+    And this function applies sorting.
+    So after we can calculate the transfer coefficient for one year.
+    It takes the emission per sources of the heikos's tab and the value of the jurek's tab. It does the ratio
+    For example transfer_coef(year_1 , source_A , receptor_B) = jurek_value(year_1 , source_A, receptor_B) / heiko_value(year_1 , source_A , last_line = total_emission_for_source_A)
+    input:
+    - path_heiko: the path of the heiko's tab
+    - path_jurek_helcom: the path of the jurek's tab with helcom sources
+    - path_jurek_ospar: the path of the jurek's tab with ospar sources
+    return:
+    - A list: First element is the different sources of the tranfer coefficient tab and the second element is the transfer coeff tab.
+    """
     #traitement des donnees
     heiko_tab = open_SR_tab(path_heiko)
     jurek_tab = fusion_open_SR_table(path_jurek_helcom,path_jurek_ospar)
@@ -168,7 +206,7 @@ def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
     tc = np.zeros((np.shape(final_jurek_result)))
     for i in range(np.shape(tc)[0]):
         for j in range(np.shape(tc)[1]):
-            if emi[j] == 0:
+            if emi[j] == 0: #we cannot divide by 0 so if the emission is 0 we put a nan
                 tc[i][j] = float("nan")
             else:
                 tc[i][j] = final_jurek_result[i][j]/emi[j]
@@ -187,6 +225,15 @@ def reshape(sources_1,result_1,sources_2,result_2):
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
 
 def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
+    """
+    The principal routine. It does the normalization for all the year. It applies the unit_normalization for all the year.
+
+    normalized_coefficient( year_X with meteorology_of_year_Y, receptor_A, source_B) = tc( year_Y, receptor_A, source_B) * coefficient(year_X, receptor_A, source_B)
+    It does a loop on year_Y for one year_X. There isn't a loop on year_X.
+    input:
+    - First_year: The start of the loop. We normalize with  a range of first_year to last_year
+    So after we have a tab with 3 dimensions. The first dimension is year, the second is receptor and the third is source.
+    """
     first_year = int(first_year_str)
     last_year = int(last_year_str)
     tc = []
