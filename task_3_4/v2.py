@@ -224,15 +224,24 @@ def reshape(sources_1,result_1,sources_2,result_2):
     new2_result_1 = step_3[1]
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
 
-def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
+def normalization(type_pol,first_year_str,last_year_str,choice_4):
     """
     The principal routine. It does the normalization for all the year. It applies the unit_normalization for all the year.
-
+    It returns an object to put in the method that you want (average or median).
     normalized_coefficient( year_X with meteorology_of_year_Y, receptor_A, source_B) = tc( year_Y, receptor_A, source_B) * coefficient(year_X, receptor_A, source_B)
     It does a loop on year_Y for one year_X. There isn't a loop on year_X.
     input:
-    - First_year: The start of the loop. We normalize with  a range of first_year to last_year
-    So after we have a tab with 3 dimensions. The first dimension is year, the second is receptor and the third is source.
+    - type_pol_str: The type of polluant that you want. If the polluant is oxidised_nitrogen (or reduced) we need to sum the dry_oxidised_nitrogen(reduced) and wet_oxidised_nitrogen(reduced)
+    - first_year_str: The start of the loop. We normalize with a range of first_year to last_year
+    - last_year: The end of the loop.  We normalize with a range of first_year to last_year
+    - choice_4: The year FOR the normalization
+    return:
+    A list: [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,receptors]
+    -- new_list_tc_sources: all sources for the transfer coefficient tab
+    -- new_list_tc: the new transfer coef tab
+    -- new_list_table_a_normaliser_sources: the sources for all the new tab( tc * old coef). Here there are two dimension. First is year and second sources. All sources aren't the same through the year.
+    -- normalized_table: So after we have a tab with 3 dimensions. The first dimension is year, the second is receptor and the third is source. So for each year there is a tab with 2 dimensiosn (receptors x sources). Be carefull, through the year all tab haven't the same shape.
+    -- receptors: the list of the receptors (same for tc tab and normalized table)
     """
     first_year = int(first_year_str)
     last_year = int(last_year_str)
@@ -241,10 +250,10 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
     tc_sources=[]
     if type_pol == "oxidised_nitrogen" or type_pol == "dry_oxidised_nitrogen" or type_pol == "wet_oxidised_nitrogen":
         for i in range(first_year,last_year+1):
-            if i == 2015:
+            if i == 2015: #no tab for 2015 so we need to ignore the year in the loop
                 pass
             else:
-                if type_pol == "oxidised_nitrogen":
+                if type_pol == "oxidised_nitrogen": #we need sum wet + dry. Open all the tab that we need
                     path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
                     path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_oxidised_nitrogen"+"_"+str(i)+".csv"
                     path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_oxidised_nitrogen"+"_"+str(i)+".csv"
@@ -253,13 +262,13 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
                     path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
                     path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
                     tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
-                else:
+                else: #for wet_oxidised_nitrogen or dry_oxidised_nitrogen
                     path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
                     path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
                     path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
-        if type_pol == "oxidised_nitrogen":
+        if type_pol == "oxidised_nitrogen": #if type_pol = oxidised_nitrogen it does the sum of dry + wet
             for k in range(len(tc)):
                 for i in range(np.shape(tc[k])[0]):
                     for j in range(np.shape(tc[k])[1]):
@@ -268,10 +277,10 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
             pass
     elif type_pol == "reduced_nitrogen" or type_pol == "dry_reduced_nitrogen" or type_pol == "wet_reduced_nitrogen":
         for i in range(first_year,last_year+1):
-            if i == 2015:
+            if i == 2015:  #no tab for 2015 so we need to ignore the year in the loop
                 pass
             else:
-                if type_pol == "reduced_nitrogen":
+                if type_pol == "reduced_nitrogen":#we need sum wet + dry. Open all the tab that we need
                     path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
                     path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_reduced_nitrogen"+"_"+str(i)+".csv"
                     path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_reduced_nitrogen"+"_"+str(i)+".csv"
@@ -280,20 +289,21 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
                     path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
                     path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
                     tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
-                else:
+                else:#for wet_reduced_nitrogen or dry_reduced_nitrogen
                     path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
                     path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
                     path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
-        if type_pol == "reduced_nitrogen":
+        if type_pol == "reduced_nitrogen":#if type_pol = oxidised_nitrogen it does the sum of dry + wet
             for k in range(len(tc)):
                 for i in range(np.shape(tc[k])[0]):
                     for j in range(np.shape(tc[k])[1]):
                         tc[k][i][j] = tc[k][i][j] + tc_bis[k][i][j]
         else:
             pass
-    if type_pol == "oxidised_nitrogen":
+    # now we have all the transfer coeff, so we need to open the year that the user want to normalize
+    if type_pol == "oxidised_nitrogen":#as for the tc tab we need to sum dry and wet if type_pol = oxidised.
         table_a_normaliser_1 = fusion_open_SR_table("data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+choice_4+".csv")
         table_a_normaliser_2 = fusion_open_SR_table("data/data_jurek_helcom/"+"dry_oxidised_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"dry_oxidised_nitrogen"+"_"+choice_4+".csv")
         table_a_normaliser_result_1 = convert(table_a_normaliser_1[2])
@@ -304,7 +314,7 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
         table_a_normaliser_result = table_a_normaliser_result_1
         table_a_normaliser_sources = table_a_normaliser_1[0]
         receptors = table_a_normaliser_1[1]
-    elif type_pol == "reduced_nitrogen":
+    elif type_pol == "reduced_nitrogen":#as for the tc tab we need to sum dry and wet if type_pol = oxidised.
         table_a_normaliser_1 = fusion_open_SR_table("data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+choice_4+".csv")
         table_a_normaliser_2 = fusion_open_SR_table("data/data_jurek_helcom/"+"dry_reduced_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"dry_reduced_nitrogen"+"_"+choice_4+".csv")
         table_a_normaliser_result_1 = convert(table_a_normaliser_1[2])
@@ -315,7 +325,7 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
         table_a_normaliser_result = table_a_normaliser_result_1
         table_a_normaliser_sources = table_a_normaliser_1[0]
         receptors = table_a_normaliser_1[1]
-    else:
+    else:#if type_pol = dry_... or wet_...
         table_a_normaliser = fusion_open_SR_table("data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv","data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv")
         table_a_normaliser_result = convert(table_a_normaliser[2])
         table_a_normaliser_sources = table_a_normaliser[0]
@@ -324,7 +334,7 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
     new_list_tc_sources = []
     new_list_table_a_normaliser_sources = []
     new_list_table_a_normaliser_result = []
-    for p in range(len(tc)):
+    for p in range(len(tc)):#In order to have the same shape for tc tab and the jurek tab because we will mutiply them.
         temp = reshape(tc_sources[p],tc[p],table_a_normaliser_sources,table_a_normaliser_result)
         new_tc_sources = temp[0]
         new_tc = temp[1]
@@ -335,7 +345,7 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
         new_list_table_a_normaliser_sources.append(new_table_a_normaliser_sources)
         new_list_table_a_normaliser_result.append(new_table_a_normaliser_result)
     normalized_table = []
-    for p in range(len(new_list_table_a_normaliser_result)):
+    for p in range(len(new_list_table_a_normaliser_result)):#the principal loop for this function.
         tempo = np.zeros((np.shape(new_list_table_a_normaliser_result[p])))
         for i in range(np.shape(tempo)[0]):
             for j in range(np.shape(tempo)[1]):
@@ -345,6 +355,16 @@ def normalization(type_pol,method,first_year_str,last_year_str,choice_4):
     return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,receptors]
 
 def mean(tab_sources,tab_result,tab_receptors):
+    """
+    It takes the return of the function normalization and do the mean through the years.
+    We cannot do a simply average it's because for some year we have source that aren't in other years. So we need to create a new tab with all sources present through the year and count when a source is present for a year.
+    input:
+    - tab_sources: the third element of the normalization function return.
+    - tab_result: the fourth element of the normalization function return.
+    - tab_receptors: the fith element of the normalization function return.
+    return:
+    - A list: The first element is the sources, the second is the mean tab associate to the sources and the third is the receptors
+    """
     list_all_sources = []
     list_position = []
     for p in range(len(tab_sources)):
@@ -374,6 +394,16 @@ def mean(tab_sources,tab_result,tab_receptors):
     return [list_all_sources,tab_moyenne,tab_receptors]
 
 def median(tab_sources,tab_result,tab_receptors):
+    """
+    It takes the return of the function normalization and do the median through the years.
+    We cannot do a simply median it's because for some year we have source that aren't in other years. So we need to create a new tab with all sources present through the year and count when a source is present for a year.
+    input:
+    - tab_sources: the third element of the normalization function return.
+    - tab_result: the fourth element of the normalization function return.
+    - tab_receptors: the fith element of the normalization function return.
+    return:
+    - A list: The first element is the sources, the second is the median tab associate to the sources and the third is the receptors
+    """
     list_all_sources = []
     list_position = []
     for p in range(len(tab_sources)):
@@ -406,6 +436,16 @@ def median(tab_sources,tab_result,tab_receptors):
     return [list_all_sources,tab_median,tab_receptors]
 
 def making_output(namelist_receptors,namelist_sources,result,filename):
+    """
+    It creates a text file (ready to open as csv file too) with the data. It can be used for creates all the transfer coeff tab trough the years in different txt files or for create the normalized tab.
+    If you want to open it on a csv file just rename the txt file with .csv at the end.
+    input:
+    - namelist_receptors: the receptors (list) (it can be the output of the average/median function (third element))
+    - namelist_sources: the sources (list) (it can be the output of the average/median function (first element))
+    - result: the value tab that you want (it can be the output of the average/median function (second element))
+    return:
+    no return, the functin just creates the txt file.
+    """
     file = open(filename,"w")
     file.write("\n")
     file = open(filename,"a")
@@ -539,7 +579,7 @@ if choice_1 == "y":
         else:
             token_7 = 1
 
-    A = normalization(choice_5,choice_2,first_year,last_year,choice_6)
+    A = normalization(choice_5,first_year,last_year,choice_6)
     if choice_2 == "average":
         B = mean(A[2],A[3],A[4])
     elif choice_2 == "median":
