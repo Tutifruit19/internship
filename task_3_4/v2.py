@@ -213,6 +213,16 @@ def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
     return [final_jurek_sources,tc]
 
 def reshape(sources_1,result_1,sources_2,result_2):
+    """
+    This routine is used during the normalization routine to fit the shape of the tab that we want normalize to the shape of the transfer coeff tab.
+    input:
+    - sources_1: the source list associate to result_1.
+    - result_1: the value tab. Here we put transfer coefficient tab for one year.
+    - sources_2: the source list associate to result_2.
+    - result_2: the value tab. Here we put the value tab that we want to normalize.
+    return:
+    - A list with all the input but they are filtered and sorted so they have the same shape.
+    """
     step_1 = filter_heiko_tables(sources_1,result_1,sources_2,result_2)
     new_sources_1 = step_1[0]
     new_result_1 = step_1[1]
@@ -351,7 +361,6 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
             for j in range(np.shape(tempo)[1]):
                 tempo[i][j] = new_list_tc[p][i][j]*new_list_table_a_normaliser_result[p][i][j]
         normalized_table.append(tempo)
-    #print(new_list_table_a_normaliser_sources)
     return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,receptors]
 
 def mean(tab_sources,tab_result,tab_receptors):
@@ -412,7 +421,6 @@ def median(tab_sources,tab_result,tab_receptors):
                 pass
             else:
                 list_all_sources.append(tab_sources[p][i])
-    #list_index_sources = np.zeros((len(tab_sources),len(list_all_sources)))
     for k in range(len(list_all_sources)):
         temp = []
         for p in range(len(tab_sources)):
@@ -449,13 +457,11 @@ def making_output(namelist_receptors,namelist_sources,result,filename):
     file = open(filename,"w")
     file.write("\n")
     file = open(filename,"a")
-    #Ecriture de la premiere ligne c'est a dire les sources:
     file.write("\t")
     #file.write("\t")
     for i in range(len(namelist_sources)):
         file.write(namelist_sources[i])
         file.write("\t")
-    #Ecriture du tableau et en prmiere colonne les recepteurs
     file.write("\n")
     for i in range(np.shape(result)[0]):
         for j in range(np.shape(result)[1]+1):
@@ -467,13 +473,7 @@ def making_output(namelist_receptors,namelist_sources,result,filename):
                 file.write("\t")
         file.write("\n")
 
-
-#A=normalization("wet_reduced_nitrogen","average","2016","2020","2019")
-#B=median(A[2],A[3],A[4])
-#making_output(B[2],B[0],B[1])
-#print(B)
-
-### Selectors:
+### Selectors: Here there is the selector part. When the user run the script the script ask some input to define what the user want. There are some token in this part. This is to be sure about the input. We assert that the input are correct before to run the script.
 
 print("This program make a normalization for the SR tables between 1995 and 2020 (you can select the first year and the last year for the normalization, the method for the normalization) and the year that you want to normalize.")
 print("Author: Henon Aurelien, aurelien.henon@meteo.fr, 2022")
@@ -578,6 +578,7 @@ if choice_1 == "y":
             token_7 = 0
         else:
             token_7 = 1
+### Here this is the execution of the script (depend on the choices of the user)
 
     A = normalization(choice_5,first_year,last_year,choice_6)
     if choice_2 == "average":
