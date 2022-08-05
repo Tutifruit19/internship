@@ -26,8 +26,8 @@ def open_SR_tab(filename):
         SR_name_receptors.append(result[i][0])
     return [SR_name_sources,SR_name_receptors,result,filename]
 
-reduced_95 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_reduced_1995-2005_2019.csv")
-reduced_10 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_reduced_2010-2020_2019.csv")
+reduced_95 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_oxidised_1995-2005_2019.csv")
+reduced_10 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_oxidised_2010-2020_2019.csv")
 
 def convert(tab):
     """
@@ -94,7 +94,7 @@ def plot_1(index_value):
     plt.title("All sources contribution for "+str(reduced_95[1][index_value]))
     plt.legend()
     plt.xticks(rotation=45,fontsize=8)
-    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/all_sources_contribution/all_sources_contribution_for_"+str(reduced_95[1][index_value])+".jpg",dpi=1000)
+    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/oxidised_10years_comparaison/all_sources_contribution/all_sources_contribution_for_"+str(reduced_95[1][index_value])+".jpg",dpi=1000)
     plt.close()
 
 def plot_2(index_value):
@@ -105,7 +105,7 @@ def plot_2(index_value):
     plt.title("2019 for "+str(reduced_95[1][index_value])+": Ratio min(normalization 1995-2005, normalization 2010-2020) / max(normalization 1995-2005, normalization 2010-2020)",fontsize=6)
     plt.legend()
     plt.xticks(rotation=45,fontsize=8)
-    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/ratio/ratio_sources_"+str(reduced_95[1][index_value])+".jpg",dpi=1000)
+    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/oxidised_10years_comparaison/ratio/ratio_sources_"+str(reduced_95[1][index_value])+".jpg",dpi=1000)
     plt.close()
 
 for i in tqdm(range(len(reduced_95[1]))):
