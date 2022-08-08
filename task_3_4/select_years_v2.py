@@ -234,7 +234,7 @@ def reshape(sources_1,result_1,sources_2,result_2):
     new2_result_1 = step_3[1]
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
 
-def normalization(type_pol,first_year_str,last_year_str,choice_4):
+def normalization(type_pol,list_years,choice_4):
     """
     The principal routine. It does the normalization for all the year. It applies the unit_normalization for all the year.
     It returns an object to put in the method that you want (average or median).
@@ -253,29 +253,27 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
     -- normalized_table: So after we have a tab with 3 dimensions. The first dimension is year, the second is receptor and the third is source. So for each year there is a tab with 2 dimensiosn (receptors x sources). Be carefull, through the year all tab haven't the same shape.
     -- receptors: the list of the receptors (same for tc tab and normalized table)
     """
-    first_year = int(first_year_str)
-    last_year = int(last_year_str)
     tc = []
     tc_bis = []
     tc_sources=[]
     if type_pol == "oxidised_nitrogen" or type_pol == "dry_oxidised_nitrogen" or type_pol == "wet_oxidised_nitrogen":
-        for i in range(first_year,last_year+1):
-            if i == 2015: #no tab for 2015 so we need to ignore the year in the loop
+        for i in range(len(list_years)):
+            if int(i) == 2015: #no tab for 2015 so we need to ignore the year in the loop
                 pass
             else:
                 if type_pol == "oxidised_nitrogen": #we need sum wet + dry. Open all the tab that we need
-                    path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
-                    path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_oxidised_nitrogen"+"_"+str(i)+".csv"
-                    path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_oxidised_nitrogen"+"_"+str(i)+".csv"
+                    path_heiko = "data/data_emi_normalization/"+list_years[i]+"_oxidised_nitrogen.csv"
+                    path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_oxidised_nitrogen"+"_"+list_years[i]+".csv"
+                    path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_oxidised_nitrogen"+"_"+list_years[i]+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[0])
-                    path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
-                    path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
+                    path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+list_years[i]+".csv"
+                    path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+list_years[i]+".csv"
                     tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
                 else: #for wet_oxidised_nitrogen or dry_oxidised_nitrogen
-                    path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
-                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
-                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
+                    path_heiko = "data/data_emi_normalization/"+list_years[i]+"_oxidised_nitrogen.csv"
+                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+list_years[i]+".csv"
+                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+list_years[i]+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
         if type_pol == "oxidised_nitrogen": #if type_pol = oxidised_nitrogen it does the sum of dry + wet
@@ -286,23 +284,23 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
         else:
             pass
     elif type_pol == "reduced_nitrogen" or type_pol == "dry_reduced_nitrogen" or type_pol == "wet_reduced_nitrogen":
-        for i in range(first_year,last_year+1):
-            if i == 2015:  #no tab for 2015 so we need to ignore the year in the loop
+        for i in range(len(list_years)):
+            if int(i) == 2015:  #no tab for 2015 so we need to ignore the year in the loop
                 pass
             else:
                 if type_pol == "reduced_nitrogen":#we need sum wet + dry. Open all the tab that we need
-                    path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
-                    path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_reduced_nitrogen"+"_"+str(i)+".csv"
-                    path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_reduced_nitrogen"+"_"+str(i)+".csv"
+                    path_heiko = "data/data_emi_normalization/"+list_years[i]+"_reduced_nitrogen.csv"
+                    path_jurek_helcom_1 = "data/data_jurek_helcom/"+"dry_reduced_nitrogen"+"_"+list_years[i]+".csv"
+                    path_jurek_ospar_1 = "data/data_jurek_ospar/"+"dry_reduced_nitrogen"+"_"+list_years[i]+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[0])
-                    path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
-                    path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
+                    path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+list_years[i]+".csv"
+                    path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+list_years[i]+".csv"
                     tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
                 else:#for wet_reduced_nitrogen or dry_reduced_nitrogen
-                    path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
-                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
-                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
+                    path_heiko = "data/data_emi_normalization/"+list_years[i]+"_reduced_nitrogen.csv"
+                    path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+list_years[i]+".csv"
+                    path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+list_years[i]+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
         if type_pol == "reduced_nitrogen":#if type_pol = oxidised_nitrogen it does the sum of dry + wet
@@ -507,24 +505,9 @@ if choice_1 == "y":
     elif choice_2 == "2":
         choice_2 = "median"
     print("------------------------------------")
-    print("Please, select the first year that you want for normalization. (between 1995 and 2020) ")
-    token_3 = 0
-    while token_3 == 0:
-        first_year = input()
-        if int(first_year) <1995 or int(first_year) > 2020:
-            print("Incorrect input, please retry:")
-            token_3 = 0
-        else:
-            token_3 = 1
-    print("Please, select the first year that you want for normalization. (between 1995 and 2020 and > first year)")
-    token_4 = 0
-    while token_4 ==0:
-        last_year = input()
-        if int(last_year) <1995 or int(last_year) > 2020 or int(last_year)<int(first_year):
-            print("Incorrect input, please retry:")
-            token_4 = 0
-        else:
-            token_4 = 1
+    print("Please, select a list of years. (ex: 1999,2003,2004,2010,2012,2020) ")
+    str_years = input()
+    list_years = str_years.split(",")
     print("------------------------------------")
     print("Please select the parameter that you want: (select 1,2,3,4,5 or 6)")
     print("1: dry reduced nitrogen")
@@ -580,7 +563,7 @@ if choice_1 == "y":
             token_7 = 1
 ### Here this is the execution of the script (depend on the choices of the user)
 
-    A = normalization(choice_5,first_year,last_year,choice_6)
+    A = normalization(choice_5,list_years,choice_6)
     if choice_2 == "average":
         B = mean(A[2],A[3],A[4])
     elif choice_2 == "median":
@@ -589,9 +572,9 @@ if choice_1 == "y":
     if choice_7 == "1":
         making_output(B[2],B[0],B[1],"output_SR.txt")
     elif choice_7 == "2":
-        for i in range(len(A[0])):
-            making_output(A[4],A[0][i],A[1][i],"output_TC_"+str(int(first_year)+i)+".txt")
+        for i in range(len(list_years)):
+            making_output(A[4],A[0][i],A[1][i],"output_TC_"+list_years[i]+".txt")
     elif choice_7 == "3":
         making_output(B[2],B[0],B[1],"output_SR.txt")
-        for i in range(len(A[0])):
-            making_output(A[4],A[0][i],A[1][i],"output_TC_"+str(int(first_year)+i)+".txt")
+        for i in range(len(list_years)):
+            making_output(A[4],A[0][i],A[1][i],"output_TC_"+list_years[i]+".txt")
