@@ -139,7 +139,9 @@ for k in range(len(list_parameters)):
     file.write("\n")
     file = open("result.txt","a")
     file.write("      ")
+    print(np.shape(tab)[2])
     for i in range(np.shape(tab)[2]):
+        print(i)
         if i<len(tri(name_region)[0]):#Organization of the output text file
             file.write(name_region[tri(name_region)[0][i]]+ "  ")#Organization of the output text file
         else:
@@ -164,7 +166,7 @@ for k in range(len(list_parameters)):
     file.write("-------------------------------------------------------------------------------------------------------------------------------")
     file.write("\n")
 
-os.system("rm -r temp")#remove temporary files
+#os.system("rm -r temp")#remove temporary files
 os.system("rm nc2CountryAllocation_4digits")#remove temporary files
 
 

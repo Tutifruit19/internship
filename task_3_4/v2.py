@@ -181,6 +181,7 @@ def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
     #traitement des donnees
     heiko_tab = open_SR_tab(path_heiko)
     jurek_tab = fusion_open_SR_table(path_jurek_helcom,path_jurek_ospar)
+    jurek_receptors = jurek_tab[1]
 
     heiko_sources = heiko_tab[0][1:]
     jurek_sources = jurek_tab[0]
@@ -210,7 +211,7 @@ def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
                 tc[i][j] = float("nan")
             else:
                 tc[i][j] = final_jurek_result[i][j]/emi[j]
-    return [final_jurek_sources,tc]
+    return [final_jurek_sources,tc,jurek_receptors]
 
 def reshape(sources_1,result_1,sources_2,result_2):
     """
@@ -259,6 +260,7 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
     tc_bis = []
     tc_sources=[]
     if type_pol == "oxidised_nitrogen" or type_pol == "dry_oxidised_nitrogen" or type_pol == "wet_oxidised_nitrogen":
+        principal_pol = "oxidised_nitrogen"
         for i in range(first_year,last_year+1):
             if i == 2015: #no tab for 2015 so we need to ignore the year in the loop
                 pass
@@ -272,12 +274,14 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
                     path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
                     path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+str(i)+".csv"
                     tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
+                    receptors = unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[2]
                 else: #for wet_oxidised_nitrogen or dry_oxidised_nitrogen
                     path_heiko = "data/data_emi_normalization/"+str(i)+"_oxidised_nitrogen.csv"
                     path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
                     path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+                    receptors = unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[2]
         if type_pol == "oxidised_nitrogen": #if type_pol = oxidised_nitrogen it does the sum of dry + wet
             for k in range(len(tc)):
                 for i in range(np.shape(tc[k])[0]):
@@ -286,6 +290,7 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
         else:
             pass
     elif type_pol == "reduced_nitrogen" or type_pol == "dry_reduced_nitrogen" or type_pol == "wet_reduced_nitrogen":
+        principal_pol = "reduced_nitrogen"
         for i in range(first_year,last_year+1):
             if i == 2015:  #no tab for 2015 so we need to ignore the year in the loop
                 pass
@@ -299,12 +304,14 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
                     path_jurek_helcom_2 = "data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
                     path_jurek_ospar_2 = "data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+str(i)+".csv"
                     tc_bis.append(unit_normalization(path_heiko,path_jurek_helcom_2,path_jurek_ospar_2)[1])
+                    receptors = unit_normalization(path_heiko,path_jurek_helcom_1,path_jurek_ospar_1)[2]
                 else:#for wet_reduced_nitrogen or dry_reduced_nitrogen
                     path_heiko = "data/data_emi_normalization/"+str(i)+"_reduced_nitrogen.csv"
                     path_jurek_helcom = "data/data_jurek_helcom/"+type_pol+"_"+str(i)+".csv"
                     path_jurek_ospar = "data/data_jurek_ospar/"+type_pol+"_"+str(i)+".csv"
                     tc.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[1])
                     tc_sources.append(unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[0])
+                    receptors = unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar)[2]
         if type_pol == "reduced_nitrogen":#if type_pol = oxidised_nitrogen it does the sum of dry + wet
             for k in range(len(tc)):
                 for i in range(np.shape(tc[k])[0]):
@@ -312,56 +319,23 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
                         tc[k][i][j] = tc[k][i][j] + tc_bis[k][i][j]
         else:
             pass
-    # now we have all the transfer coeff, so we need to open the year that the user want to normalize
-    if type_pol == "oxidised_nitrogen":#as for the tc tab we need to sum dry and wet if type_pol = oxidised.
-        table_a_normaliser_1 = fusion_open_SR_table("data/data_jurek_helcom/"+"wet_oxidised_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"wet_oxidised_nitrogen"+"_"+choice_4+".csv")
-        table_a_normaliser_2 = fusion_open_SR_table("data/data_jurek_helcom/"+"dry_oxidised_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"dry_oxidised_nitrogen"+"_"+choice_4+".csv")
-        table_a_normaliser_result_1 = convert(table_a_normaliser_1[2])
-        table_a_normaliser_result_2 = convert(table_a_normaliser_2[2])
-        for i in range(np.shape(table_a_normaliser_result_1)[0]):
-            for j in range(np.shape(table_a_normaliser_result_1)[1]):
-                table_a_normaliser_result_1[i][j] = table_a_normaliser_result_1[i][j] + table_a_normaliser_result_2[i][j]
-        table_a_normaliser_result = table_a_normaliser_result_1
-        table_a_normaliser_sources = table_a_normaliser_1[0]
-        receptors = table_a_normaliser_1[1]
-    elif type_pol == "reduced_nitrogen":#as for the tc tab we need to sum dry and wet if type_pol = oxidised.
-        table_a_normaliser_1 = fusion_open_SR_table("data/data_jurek_helcom/"+"wet_reduced_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"wet_reduced_nitrogen"+"_"+choice_4+".csv")
-        table_a_normaliser_2 = fusion_open_SR_table("data/data_jurek_helcom/"+"dry_reduced_nitrogen"+"_"+choice_4+".csv","data/data_jurek_ospar/"+"dry_reduced_nitrogen"+"_"+choice_4+".csv")
-        table_a_normaliser_result_1 = convert(table_a_normaliser_1[2])
-        table_a_normaliser_result_2 = convert(table_a_normaliser_2[2])
-        for i in range(np.shape(table_a_normaliser_result_1)[0]):
-            for j in range(np.shape(table_a_normaliser_result_1)[1]):
-                table_a_normaliser_result_1[i][j] = table_a_normaliser_result_1[i][j] + table_a_normaliser_result_2[i][j]
-        table_a_normaliser_result = table_a_normaliser_result_1
-        table_a_normaliser_sources = table_a_normaliser_1[0]
-        receptors = table_a_normaliser_1[1]
-    else:#if type_pol = dry_... or wet_...
-        table_a_normaliser = fusion_open_SR_table("data/data_jurek_helcom/"+type_pol+"_"+choice_4+".csv","data/data_jurek_ospar/"+type_pol+"_"+choice_4+".csv")
-        table_a_normaliser_result = convert(table_a_normaliser[2])
-        table_a_normaliser_sources = table_a_normaliser[0]
-        receptors = table_a_normaliser[1]
-    new_list_tc = []
-    new_list_tc_sources = []
-    new_list_table_a_normaliser_sources = []
-    new_list_table_a_normaliser_result = []
-    for p in range(len(tc)):#In order to have the same shape for tc tab and the jurek tab because we will mutiply them.
-        temp = reshape(tc_sources[p],tc[p],table_a_normaliser_sources,table_a_normaliser_result)
-        new_tc_sources = temp[0]
-        new_tc = temp[1]
-        new_table_a_normaliser_sources = temp[2]
-        new_table_a_normaliser_result = temp[3]
-        new_list_tc_sources.append(new_tc_sources)
-        new_list_tc.append(new_tc)
-        new_list_table_a_normaliser_sources.append(new_table_a_normaliser_sources)
-        new_list_table_a_normaliser_result.append(new_table_a_normaliser_result)
+    table_a_normaliser = open_SR_tab("data/data_emi_normalization/"+choice_4+"_"+principal_pol+".csv")
+    table_a_normaliser_result = convert(table_a_normaliser[2])
+    table_a_normaliser_sources = table_a_normaliser[0][1:]
+    new_sources = []
+    new_tab = []
+    for p in range(len(tc)):
+        temp = filter_heiko_tables(table_a_normaliser_sources,table_a_normaliser_result,tc_sources[p],tc[p])
+        new_sources.append(temp[0])
+        new_tab.append(temp[1])
     normalized_table = []
-    for p in range(len(new_list_table_a_normaliser_result)):#the principal loop for this function.
-        tempo = np.zeros((np.shape(new_list_table_a_normaliser_result[p])))
+    for p in range(len(new_tab)):#the principal loop for this function.
+        tempo = np.zeros((np.shape(tc[p])))
         for i in range(np.shape(tempo)[0]):
             for j in range(np.shape(tempo)[1]):
-                tempo[i][j] = new_list_tc[p][i][j]*new_list_table_a_normaliser_result[p][i][j]
+                tempo[i][j] = tc[p][i][j]*new_tab[p][-1][j]
         normalized_table.append(tempo)
-    return [new_list_tc_sources,new_list_tc,new_list_table_a_normaliser_sources,normalized_table,receptors]
+    return [tc_sources,tc,new_sources,normalized_table,receptors]
 
 def mean(tab_sources,tab_result,tab_receptors):
     """
