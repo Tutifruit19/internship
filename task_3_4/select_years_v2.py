@@ -326,14 +326,26 @@ def normalization(type_pol,list_years,choice_4):
         temp = filter_heiko_tables(table_a_normaliser_sources,table_a_normaliser_result,tc_sources[p],tc[p])
         new_sources.append(temp[0])
         new_tab.append(temp[1])
+    new_tc_sources = []
+    new_tc = []
+    for p in range(len(tc)):
+        temp = filter_heiko_tables(tc_sources[p],tc[p],new_sources[p],new_tab[p])
+        new_tc_sources.append(temp[0])
+        new_tc.append(temp[1])
     normalized_table = []
-    for p in range(len(new_tab)):#the principal loop for this function.
-        tempo = np.zeros((np.shape(tc[p])))
+    new_sources_2 = []
+    new_tab_2 = []
+    for p in range(len(new_tc)):
+        temp = sorting(list(new_sources[p]),new_tab[p],list(new_tc_sources[p]),new_tc[p])
+        new_sources_2.append(temp[0])
+        new_tab_2.append(temp[1])
+    for p in range(len(new_tab_2)):#the principal loop for this function.
+        tempo = np.zeros((np.shape(new_tc[p])))
         for i in range(np.shape(tempo)[0]):
             for j in range(np.shape(tempo)[1]):
-                tempo[i][j] = tc[p][i][j]*new_tab[p][-1][j]
+                tempo[i][j] = new_tc[p][i][j]*new_tab_2[p][-1][j]
         normalized_table.append(tempo)
-    return [tc_sources,tc,new_sources,normalized_table,receptors]
+    return [new_tc_sources,new_tc,new_sources,normalized_table,receptors]
 
 def mean(tab_sources,tab_result,tab_receptors):
     """
