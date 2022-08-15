@@ -68,6 +68,57 @@ def fusion_open_SR_table(filename_1,filename_2):
         new_SR_name_emitters.append(SR_name_emitters[i][k:])
     return [new_SR_name_emitters,SR_name_receptors,result,filename_1,filename_2]
 
+def open_dep(list_years,pol):
+    values = []
+    receptors = []
+    for p in range(len(list_years)):
+        if p==2015:
+            pass
+        else:
+            tab = np.genfromtxt("data/data_scaling/result"+list_years[p]+"_"+pol+".txt",dtype=str)
+            rec = []
+            val = []
+            for i in range(np.shape(tab)[0]):
+                rec.append(tab[i][0])
+                val.append(tab[i][1])
+            receptors.append(rec)
+            values.append(val)
+    return [receptors,values]
+
+def sum_jurek_tab(list_years,pol):
+    receptors = []
+    values = []
+    total = []
+    for p in range(len(list_years)):
+        if p==2015:
+            pass
+        else:
+            path_jurek_helcom = "data/data_jurek_helcom/"+pol+"_"+list_years[p]+".csv"
+            path_jurek_ospar = "data/data_jurek_ospar/"+pol+"_"+list_years[p]+".csv"
+            temp = fusion_open_SR_table(path_jurek_helcom,path_jurek_ospar)
+            receptors.append(temp[1])
+            values.append(convert(temp[2]))
+    for p in range(len(values)):
+        year_sum = []
+        for i in range(np.shape(values[p])[0]):
+            #print(receptors[p][i])
+            sigma = sum(values[p][i][:]/10)
+            year_sum.append(sigma)
+        total.append(year_sum)
+    return [receptors,total]
+
+def sorting_bis(heiko_sources,heiko_result,jurek_sources,jurek_result):
+    new_index_heiko = []
+    heiko_sorted_sources = []
+    heiko_sorted_result = np.zeros((np.shape(heiko_result)))
+    for i in range(len(jurek_sources)):
+        new_index_heiko.append(heiko_sources.index(jurek_sources[i]))
+    for i in range(np.shape(heiko_result)[0]):
+        heiko_sorted_result[i] = heiko_result[new_index_heiko[i]]
+    for i in range(len(heiko_sources)):
+        heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
+    return [heiko_sorted_sources,heiko_sorted_result]
+
 def convert(tab):
     """
     After open the SR tab the values are in tab but there are strings. So we need to keep just the values and transform the string into float.
@@ -162,6 +213,27 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
     for i in range(len(heiko_sources)):
         heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
     return [heiko_sorted_sources,heiko_sorted_result]
+
+def scaling(list_years,pol_dep,pol_sr):
+    SR = sum_jurek_tab(list_years,pol_sr)
+    receptors_SR = SR[0]
+    values_SR = SR[1]
+    dep = open_dep(list_years,pol_dep)
+    receptors_dep = dep[0]
+    values_dep = dep[1]
+    new_receptors_dep = []
+    new_values_dep = []
+    for p in range(len(values_SR)):
+        temp = sorting_bis(list(receptors_dep[p]),values_dep[p],list(receptors_SR[p]),values_SR[p])
+        new_receptors_dep.append(temp[0])
+        new_values_dep.append(temp[1])
+    scale_factor = []
+    for p in range(len(values_SR)):
+        ratio = []
+        for i in range(len(new_receptors_dep[p])):
+            ratio.append(float(new_values_dep[p][i])/float(values_SR[p][i]))
+        scale_factor.append(ratio)
+    return [new_receptors_dep,scale_factor]
 
 def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
     """
@@ -339,13 +411,32 @@ def normalization(type_pol,list_years,choice_4):
         temp = sorting(list(new_sources[p]),new_tab[p],list(new_tc_sources[p]),new_tc[p])
         new_sources_2.append(temp[0])
         new_tab_2.append(temp[1])
+    #scaling:
+    if type_pol == "dry_oxidised_nitrogen":
+        pol_dep = "DDEP_OXN"
+    elif type_pol == "wet_oxidised_nitrogen":
+        pol_dep = "WDEP_OXN"
+    elif type_pol == "dry_reduced_nitrogen":
+        pol_dep = "DDEP_RDN"
+    elif type_pol == "wet_reduced_nitrogen":
+        pol_dep = "WDEP_RDN"
+    scale = scaling(list_years,pol_dep,type_pol)
+    scaled_new_tc = []
+    for p in range(len(new_tc)):
+        scaled = np.zeros((np.shape(new_tc[p])))
+        for i in range(np.shape(scaled)[0]):
+            #print(scale[1])
+            #print(i)
+            for j in range(np.shape(scaled)[1]):
+                scaled[i][j] = new_tc[p][i][j]*scale[1][p][i]
+        scaled_new_tc.append(scaled)
     for p in range(len(new_tab_2)):#the principal loop for this function.
-        tempo = np.zeros((np.shape(new_tc[p])))
+        tempo = np.zeros((np.shape(scaled_new_tc[p])))
         for i in range(np.shape(tempo)[0]):
             for j in range(np.shape(tempo)[1]):
-                tempo[i][j] = new_tc[p][i][j]*new_tab_2[p][-1][j]
+                tempo[i][j] = scaled_new_tc[p][i][j]*new_tab_2[p][-1][j]
         normalized_table.append(tempo)
-    return [new_tc_sources,new_tc,new_sources,normalized_table,receptors]
+    return [new_tc_sources,scaled_new_tc,new_sources,normalized_table,receptors]
 
 def mean(tab_sources,tab_result,tab_receptors):
     """

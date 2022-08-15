@@ -91,22 +91,10 @@ def sum_jurek_tab(first_year,last_year,pol):
         total.append(year_sum)
     return [receptors,total]
 
-def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
-    """
-    Now, we applied the function filter_heiko_tables on heiko's tab and the function filter_jurek_tables on the jurek's tab.
-    We need to be sure if the sources are in the same order in the jurek's tab than in the heiko's tab.
-    This function re order the tab.
-    input:
-    - heiko_sources: the first element of the return of the function filter_heiko_tables.
-    - heiko_result: the second element of the return of the function flter_heiko_tables.
-    - jurek_sources: the first element of the return of the function filter_jurek_tables.
-    - jurek_result: the second element of the return of the function flter_jurek_tables.
-    return:
-    - A list with heiko's tab and sources. The heiko tab is now sorted to fit with the jure's tab. First element is the filtered sources and second element is the filtered value tab.
-    """
+def sorting_bis(heiko_sources,heiko_result,jurek_sources,jurek_result):
     new_index_heiko = []
     heiko_sorted_sources = []
-    heiko_sorted_result = heiko_result
+    heiko_sorted_result = np.zeros((np.shape(heiko_result)))
     for i in range(len(jurek_sources)):
         new_index_heiko.append(heiko_sources.index(jurek_sources[i]))
     for i in range(np.shape(heiko_result)[0]):
@@ -125,17 +113,10 @@ def scaling(first_year,last_year,pol_dep,pol_sr):
     new_receptors_dep = []
     new_values_dep = []
     for p in range(len(values_SR)):
-        temp = sorting(list(receptors_dep[p]),values_dep[p],list(receptors_SR[p]),values_SR[p])
+        temp = sorting_bis(list(receptors_dep[p]),values_dep[p],list(receptors_SR[p]),values_SR[p])
         new_receptors_dep.append(temp[0])
         new_values_dep.append(temp[1])
-        """print(new_receptors_dep)
-        print(receptors_SR)
-        print("----------")"""
     scale_factor = []
-    """for p in range(len(receptors_SR)):
-        print(new_receptors_dep[p])
-        print(receptors_SR[p])
-        print("------------------")"""
     for p in range(len(values_SR)):
         ratio = []
         for i in range(len(new_receptors_dep)):
