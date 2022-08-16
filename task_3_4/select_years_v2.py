@@ -243,7 +243,7 @@ def scaling(list_years,pol_dep,pol_sr):
                 values_SR.append(tab)
                 receptors_SR.append(receptors_SR_1[p])
             else:
-                print("alerte")
+                print("error")
 
         values_dep = []
         receptors_dep = []
@@ -255,7 +255,7 @@ def scaling(list_years,pol_dep,pol_sr):
                 values_dep.append(tab)
                 receptors_dep.append(receptors_dep_1[p])
             else:
-                print("alerte")
+                print("error")
 
     elif pol_sr == "oxidised_nitrogen":
         SR_1 = sum_jurek_tab(list_years,"dry_oxidised_nitrogen")
@@ -282,7 +282,7 @@ def scaling(list_years,pol_dep,pol_sr):
                 values_SR.append(tab)
                 receptors_SR.append(receptors_SR_1[p])
             else:
-                print("alerte")
+                print("error")
 
         values_dep = []
         receptors_dep = []
@@ -294,7 +294,7 @@ def scaling(list_years,pol_dep,pol_sr):
                 values_dep.append(tab)
                 receptors_dep.append(receptors_dep_1[p])
             else:
-                print("alerte")
+                print("error")
 
     else:
         SR = sum_jurek_tab(list_years,pol_sr)

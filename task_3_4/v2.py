@@ -33,6 +33,57 @@ def open_SR_tab(filename):
         SR_name_receptors.append(result[i][0])
     return [SR_name_sources,SR_name_receptors,result,filename]
 
+def open_dep(first_year,last_year,pol):
+    values = []
+    receptors = []
+    for p in range(first_year,last_year+1):
+        if p==2015:
+            pass
+        else:
+            tab = np.genfromtxt("data/data_scaling/result"+str(p)+"_"+pol+".txt",dtype=str)
+            rec = []
+            val = []
+            for i in range(np.shape(tab)[0]):
+                rec.append(tab[i][0])
+                val.append(tab[i][1])
+            receptors.append(rec)
+            values.append(val)
+    return [receptors,values]
+
+def sum_jurek_tab(first_year,last_year,pol):
+    receptors = []
+    values = []
+    total = []
+    for p in range(first_year,last_year+1):
+        if p==2015:
+            pass
+        else:
+            path_jurek_helcom = "data/data_jurek_helcom/"+pol+"_"+str(p)+".csv"
+            path_jurek_ospar = "data/data_jurek_ospar/"+pol+"_"+str(p)+".csv"
+            temp = fusion_open_SR_table(path_jurek_helcom,path_jurek_ospar)
+            receptors.append(temp[1])
+            values.append(convert(temp[2]))
+    for p in range(len(values)):
+        year_sum = []
+        for i in range(np.shape(values[p])[0]):
+            #print(receptors[p][i])
+            sigma = sum(values[p][i][:]/10)
+            year_sum.append(sigma)
+        total.append(year_sum)
+    return [receptors,total]
+
+def sorting_bis(heiko_sources,heiko_result,jurek_sources,jurek_result):
+    new_index_heiko = []
+    heiko_sorted_sources = []
+    heiko_sorted_result = np.zeros((np.shape(heiko_result)))
+    for i in range(len(jurek_sources)):
+        new_index_heiko.append(heiko_sources.index(jurek_sources[i]))
+    for i in range(np.shape(heiko_result)[0]):
+        heiko_sorted_result[i] = heiko_result[new_index_heiko[i]]
+    for i in range(len(heiko_sources)):
+        heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
+    return [heiko_sorted_sources,heiko_sorted_result]
+
 def fusion_open_SR_table(filename_1,filename_2):
     """
     Do the same as the function open_SR_tab but for the jurek's SR tab.
@@ -163,6 +214,110 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
         heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
     return [heiko_sorted_sources,heiko_sorted_result]
 
+def scaling(first_year,last_year,pol_dep,pol_sr):
+    if pol_sr == "reduced_nitrogen":
+        SR_1 = sum_jurek_tab(first_year,last_year,"dry_reduced_nitrogen")
+        SR_2 = sum_jurek_tab(first_year,last_year,"wet_reduced_nitrogen")
+        receptors_SR_1 = SR_1[0]
+        values_SR_1 = SR_1[1]
+        receptors_SR_2 = SR_2[0]
+        values_SR_2 = SR_2[1]
+
+        dep_1 = open_dep(first_year,last_year,"DDEP_RDN")
+        dep_2 = open_dep(first_year,last_year,"WDEP_RDN")
+        receptors_dep_1 = dep_1[0]
+        values_dep_1 = dep_1[1]
+        receptors_dep_2 = dep_2[0]
+        values_dep_2 = dep_2[1]
+
+        #print(values_dep_1)
+        #print(values_SR_1)
+
+        values_SR = []
+        receptors_SR = []
+        for p in range(len(values_SR_1)):
+            if np.shape(values_SR_1[p]) == np.shape(values_SR_2[p]):
+                tab = np.zeros((np.shape(values_SR_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_SR_1[p][i])+float(values_SR_2[p][i])
+                values_SR.append(tab)
+                receptors_SR.append(receptors_SR_1[p])
+            else:
+                print("error")
+
+        values_dep = []
+        receptors_dep = []
+        for p in range(len(values_dep_1)):
+            if np.shape(values_dep_1[p]) == np.shape(values_dep_2[p]):
+                tab = np.zeros((np.shape(values_dep_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_dep_1[p][i])+float(values_dep_2[p][i])
+                values_dep.append(tab)
+                receptors_dep.append(receptors_dep_1[p])
+            else:
+                print("error")
+
+    elif pol_sr == "oxidised_nitrogen":
+        SR_1 = sum_jurek_tab(first_year,last_year,"dry_oxidised_nitrogen")
+        SR_2 = sum_jurek_tab(first_year,last_year,"wet_oxidised_nitrogen")
+        receptors_SR_1 = SR_1[0]
+        values_SR_1 = SR_1[1]
+        receptors_SR_2 = SR_2[0]
+        values_SR_2 = SR_2[1]
+
+        dep_1 = open_dep(first_year,last_year,"DDEP_OXN")
+        dep_2 = open_dep(first_year,last_year,"WDEP_OXN")
+        receptors_dep_1 = dep_1[0]
+        values_dep_1 = dep_1[1]
+        receptors_dep_2 = dep_2[0]
+        values_dep_2 = dep_2[1]
+
+        values_SR = []
+        receptors_SR = []
+        for p in range(len(values_SR_1)):
+            if np.shape(values_SR_1[p]) == np.shape(values_SR_2[p]):
+                tab = np.zeros((np.shape(values_SR_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_SR_1[p][i])+float(values_SR_2[p][i])
+                values_SR.append(tab)
+                receptors_SR.append(receptors_SR_1[p])
+            else:
+                print("error")
+
+        values_dep = []
+        receptors_dep = []
+        for p in range(len(values_dep_1)):
+            if np.shape(values_dep_1[p]) == np.shape(values_dep_2[p]):
+                tab = np.zeros((np.shape(values_dep_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_dep_1[p][i])+float(values_dep_2[p][i])
+                values_dep.append(tab)
+                receptors_dep.append(receptors_dep_1[p])
+            else:
+                print("error")
+
+    else:
+        SR = sum_jurek_tab(first_year,last_year,pol_sr)
+        receptors_SR = SR[0]
+        values_SR = SR[1]
+        dep = open_dep(first_year,last_year,pol_dep)
+        receptors_dep = dep[0]
+        values_dep = dep[1]
+
+    new_receptors_dep = []
+    new_values_dep = []
+    for p in range(len(values_SR)):
+        temp = sorting_bis(list(receptors_dep[p]),values_dep[p],list(receptors_SR[p]),values_SR[p])
+        new_receptors_dep.append(temp[0])
+        new_values_dep.append(temp[1])
+    scale_factor = []
+    for p in range(len(values_SR)):
+        ratio = []
+        for i in range(len(new_receptors_dep[p])):
+            ratio.append(float(new_values_dep[p][i])/float(values_SR[p][i]))
+        scale_factor.append(ratio)
+    return [new_receptors_dep,scale_factor]
+
 def unit_normalization(path_heiko,path_jurek_helcom,path_jurek_ospar):
     """
     Do the transfer coefficient tab for just one year.
@@ -235,7 +390,7 @@ def reshape(sources_1,result_1,sources_2,result_2):
     new2_result_1 = step_3[1]
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
 
-def normalization(type_pol,first_year_str,last_year_str,choice_4):
+def normalization(type_pol,first_year_str,last_year_str,choice_4,choice_scale):
     """
     The principal routine. It does the normalization for all the year. It applies the unit_normalization for all the year.
     It returns an object to put in the method that you want (average or median).
@@ -341,13 +496,36 @@ def normalization(type_pol,first_year_str,last_year_str,choice_4):
         temp = sorting(list(new_sources[p]),new_tab[p],list(new_tc_sources[p]),new_tc[p])
         new_sources_2.append(temp[0])
         new_tab_2.append(temp[1])
+    if type_pol == "dry_oxidised_nitrogen":
+        pol_dep = "DDEP_OXN"
+    elif type_pol == "wet_oxidised_nitrogen":
+        pol_dep = "WDEP_OXN"
+    elif type_pol == "dry_reduced_nitrogen":
+        pol_dep = "DDEP_RDN"
+    elif type_pol == "wet_reduced_nitrogen":
+        pol_dep = "WDEP_RDN"
+    elif type_pol == "oxidised_nitrogen":
+        pol_dep = "nan"
+    elif type_pol == "reduced_nitrogen":
+        pol_dep = "nan"
+    scale = scaling(first_year,last_year,pol_dep,type_pol)
+    scaled_new_tc = []
+    for p in range(len(new_tc)):
+        scaled = np.zeros((np.shape(new_tc[p])))
+        for i in range(np.shape(scaled)[0]):
+            for j in range(np.shape(scaled)[1]):
+                if choice_scale == "y":
+                    scaled[i][j] = new_tc[p][i][j]*scale[1][p][i]
+                elif choice_scale == "n":
+                    scaled[i][j] = new_tc[p][i][j]
+        scaled_new_tc.append(scaled)
     for p in range(len(new_tab_2)):#the principal loop for this function.
-        tempo = np.zeros((np.shape(new_tc[p])))
+        tempo = np.zeros((np.shape(scaled_new_tc[p])))
         for i in range(np.shape(tempo)[0]):
             for j in range(np.shape(tempo)[1]):
-                tempo[i][j] = new_tc[p][i][j]*new_tab_2[p][-1][j]
+                tempo[i][j] = scaled_new_tc[p][i][j]*new_tab_2[p][-1][j]
         normalized_table.append(tempo)
-    return [new_tc_sources,new_tc,new_sources,normalized_table,receptors]
+    return [new_tc_sources,scaled_new_tc,new_sources,normalized_table,receptors]
 
 def mean(tab_sources,tab_result,tab_receptors):
     """
@@ -552,6 +730,16 @@ if choice_1 == "y":
         else:
             token_6 = 1
     print("------------------------------------")
+    print("Do you want a scaling with the latest trend result ? (y/n) - recommended")
+    token_scale = 0
+    while token_scale == 0:
+        choice_scale = input()
+        if choice_scale != "y" and choice_scale != "n":
+            print("Incorrect input, please retry:")
+            token_scale = 0
+        else:
+            token_scale = 1
+    print("------------------------------------")
     print("What kind of output do you want ? (Please select your(s) output(s)")
     print("1: the normalized SR table (output_SR.txt)")
     print("2: all transfer coefficients (output_TC_year.txt)")
@@ -566,7 +754,7 @@ if choice_1 == "y":
             token_7 = 1
 ### Here this is the execution of the script (depend on the choices of the user)
 
-    A = normalization(choice_5,first_year,last_year,choice_6)
+    A = normalization(choice_5,first_year,last_year,choice_6,choice_scale)
     if choice_2 == "average":
         B = mean(A[2],A[3],A[4])
     elif choice_2 == "median":
