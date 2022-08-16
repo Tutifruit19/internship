@@ -215,12 +215,95 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
     return [heiko_sorted_sources,heiko_sorted_result]
 
 def scaling(list_years,pol_dep,pol_sr):
-    SR = sum_jurek_tab(list_years,pol_sr)
-    receptors_SR = SR[0]
-    values_SR = SR[1]
-    dep = open_dep(list_years,pol_dep)
-    receptors_dep = dep[0]
-    values_dep = dep[1]
+    if pol_sr == "reduced_nitrogen":
+        SR_1 = sum_jurek_tab(list_years,"dry_reduced_nitrogen")
+        SR_2 = sum_jurek_tab(list_years,"wet_reduced_nitrogen")
+        receptors_SR_1 = SR_1[0]
+        values_SR_1 = SR_1[1]
+        receptors_SR_2 = SR_2[0]
+        values_SR_2 = SR_2[1]
+
+        dep_1 = open_dep(list_years,"DDEP_RDN")
+        dep_2 = open_dep(list_years,"WDEP_RDN")
+        receptors_dep_1 = dep_1[0]
+        values_dep_1 = dep_1[1]
+        receptors_dep_2 = dep_2[0]
+        values_dep_2 = dep_2[1]
+
+        #print(values_dep_1)
+        #print(values_SR_1)
+
+        values_SR = []
+        receptors_SR = []
+        for p in range(len(values_SR_1)):
+            if np.shape(values_SR_1[p]) == np.shape(values_SR_2[p]):
+                tab = np.zeros((np.shape(values_SR_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_SR_1[p][i])+float(values_SR_2[p][i])
+                values_SR.append(tab)
+                receptors_SR.append(receptors_SR_1[p])
+            else:
+                print("alerte")
+
+        values_dep = []
+        receptors_dep = []
+        for p in range(len(values_dep_1)):
+            if np.shape(values_dep_1[p]) == np.shape(values_dep_2[p]):
+                tab = np.zeros((np.shape(values_dep_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_dep_1[p][i])+float(values_dep_2[p][i])
+                values_dep.append(tab)
+                receptors_dep.append(receptors_dep_1[p])
+            else:
+                print("alerte")
+
+    elif pol_sr == "oxidised_nitrogen":
+        SR_1 = sum_jurek_tab(list_years,"dry_oxidised_nitrogen")
+        SR_2 = sum_jurek_tab(list_years,"wet_oxidised_nitrogen")
+        receptors_SR_1 = SR_1[0]
+        values_SR_1 = SR_1[1]
+        receptors_SR_2 = SR_2[0]
+        values_SR_2 = SR_2[1]
+
+        dep_1 = open_dep(list_years,"DDEP_OXN")
+        dep_2 = open_dep(list_years,"WDEP_OXN")
+        receptors_dep_1 = dep_1[0]
+        values_dep_1 = dep_1[1]
+        receptors_dep_2 = dep_2[0]
+        values_dep_2 = dep_2[1]
+
+        values_SR = []
+        receptors_SR = []
+        for p in range(len(values_SR_1)):
+            if np.shape(values_SR_1[p]) == np.shape(values_SR_2[p]):
+                tab = np.zeros((np.shape(values_SR_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_SR_1[p][i])+float(values_SR_2[p][i])
+                values_SR.append(tab)
+                receptors_SR.append(receptors_SR_1[p])
+            else:
+                print("alerte")
+
+        values_dep = []
+        receptors_dep = []
+        for p in range(len(values_dep_1)):
+            if np.shape(values_dep_1[p]) == np.shape(values_dep_2[p]):
+                tab = np.zeros((np.shape(values_dep_1[p])))
+                for i in range(np.shape(tab)[0]):
+                    tab[i] = float(values_dep_1[p][i])+float(values_dep_2[p][i])
+                values_dep.append(tab)
+                receptors_dep.append(receptors_dep_1[p])
+            else:
+                print("alerte")
+
+    else:
+        SR = sum_jurek_tab(list_years,pol_sr)
+        receptors_SR = SR[0]
+        values_SR = SR[1]
+        dep = open_dep(list_years,pol_dep)
+        receptors_dep = dep[0]
+        values_dep = dep[1]
+
     new_receptors_dep = []
     new_values_dep = []
     for p in range(len(values_SR)):
@@ -307,7 +390,7 @@ def reshape(sources_1,result_1,sources_2,result_2):
     new2_result_1 = step_3[1]
     return [new2_sources_1,new2_result_1,new_sources_2,new_result_2]
 
-def normalization(type_pol,list_years,choice_4):
+def normalization(type_pol,list_years,choice_4,choice_scale):
     """
     The principal routine. It does the normalization for all the year. It applies the unit_normalization for all the year.
     It returns an object to put in the method that you want (average or median).
@@ -420,15 +503,20 @@ def normalization(type_pol,list_years,choice_4):
         pol_dep = "DDEP_RDN"
     elif type_pol == "wet_reduced_nitrogen":
         pol_dep = "WDEP_RDN"
+    elif type_pol == "oxidised_nitrogen":
+        pol_dep = "nan"
+    elif type_pol == "reduced_nitrogen":
+        pol_dep = "nan"
     scale = scaling(list_years,pol_dep,type_pol)
     scaled_new_tc = []
     for p in range(len(new_tc)):
         scaled = np.zeros((np.shape(new_tc[p])))
         for i in range(np.shape(scaled)[0]):
-            #print(scale[1])
-            #print(i)
             for j in range(np.shape(scaled)[1]):
-                scaled[i][j] = new_tc[p][i][j]*scale[1][p][i]
+                if choice_scale == "y":
+                    scaled[i][j] = new_tc[p][i][j]*scale[1][p][i]
+                elif choice_scale == "n":
+                    scaled[i][j] = new_tc[p][i][j]
         scaled_new_tc.append(scaled)
     for p in range(len(new_tab_2)):#the principal loop for this function.
         tempo = np.zeros((np.shape(scaled_new_tc[p])))
@@ -625,6 +713,16 @@ if choice_1 == "y":
         else:
             token_6 = 1
     print("------------------------------------")
+    print("Do you want a scaling with the latest trend result ? (y/n) - recommended")
+    token_scale = 0
+    while token_scale == 0:
+        choice_scale = input()
+        if choice_scale != "y" and choice_scale != "n":
+            print("Incorrect input, please retry:")
+            token_scale = 0
+        else:
+            token_scale = 1
+    print("------------------------------------")
     print("What kind of output do you want ? (Please select your(s) output(s)")
     print("1: the normalized SR table (output_SR.txt)")
     print("2: all transfer coefficients (output_TC_year.txt)")
@@ -639,7 +737,7 @@ if choice_1 == "y":
             token_7 = 1
 ### Here this is the execution of the script (depend on the choices of the user)
 
-    A = normalization(choice_5,list_years,choice_6)
+    A = normalization(choice_5,list_years,choice_6,choice_scale)
     if choice_2 == "average":
         B = mean(A[2],A[3],A[4])
     elif choice_2 == "median":
