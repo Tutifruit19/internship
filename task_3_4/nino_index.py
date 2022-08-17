@@ -19,7 +19,7 @@ year_mean_SOI = []
 for i in range(np.shape(SOI_tab)[0]):
     year_mean_SOI.append(sum(SOI_tab[i])/len(SOI_tab[i]))
 
-number_year = 6
+number_year = 4
 
 min_list = []
 min_index = []
@@ -103,8 +103,8 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
         heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
     return [heiko_sorted_sources,heiko_sorted_result]
 
-tab_1 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_reduced_1995-2020_2019.csv")
-tab_2 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_reduced_enso6_2019.csv")
+tab_1 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_oxidised_1995-2020_2019.csv")
+tab_2 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_oxidised_2013-2020_2019.csv")
 
 value_1 = convert(tab_1[2])
 value_2 = convert(tab_2[2])
@@ -120,14 +120,15 @@ def plot_1(index_value):
     for i in range(len(sources_1bis)):
         if i==0:
             plt.bar(sources_1bis[i],value_1bis[index_value][i],color="red",label="Normalization 1995-2020")
-            plt.bar(sources_2[i],value_2[index_value][i],color="blue",alpha=0.5,label="Normalization 3 years nina and 3 years nino")
+            #plt.bar(sources_2[i],value_2[index_value][i],color="blue",alpha=0.5,label="Normalization 4 years nina and 4 years nino")
+            plt.bar(sources_2[i],value_2[index_value][i],color="blue",alpha=0.5,label="Normalization 2013-2020")
         else:
             plt.bar(sources_1bis[i],value_1bis[index_value][i],color="red")
             plt.bar(sources_2[i],value_2[index_value][i],color="blue",alpha=0.5)
     plt.title("All sources contribution for "+str(tab_1[1][index_value]))
     plt.legend()
     plt.xticks(rotation=45,fontsize=8)
-    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/enso_comp_6_reduced/all_sources_contribution/all_sources_contribution_for_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
+    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/oxidised_6years/all_sources_contribution/all_sources_contribution_for_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
     plt.close()
 
 def plot_2(index_value):
@@ -136,10 +137,11 @@ def plot_2(index_value):
         plt.bar(sources_1bis[i],ratio,color="blue")
     plt.axhline(y=0.5,color="black",label="ratio = 0.5")
     plt.axhline(y=0.9,color="red",label="ratio = 0.9")
-    plt.title("2019 for "+str(tab_1[1][index_value])+": Ratio min(normalization 1995-2020, normalization enso 6 years) / max(normalization 1995-2020, normalization enso 6 years)",fontsize=6)
+    #plt.title("2019 for "+str(tab_1[1][index_value])+": Ratio min(normalization 1995-2020, normalization enso 8 years) / max(normalization 1995-2020, normalization enso 8 years)",fontsize=6)
+    plt.title("2019 for "+str(tab_1[1][index_value])+": Ratio min(normalization 1995-2020, normalization 2013-2020 years) / max(normalization 1995-2020, normalization 2013-2020 years)",fontsize=6)
     plt.legend()
     plt.xticks(rotation=45,fontsize=8)
-    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/enso_comp_6_reduced/ratio/ratio_sources_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
+    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/oxidised_6years/ratio/ratio_sources_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
     plt.close()
 
 def run():
