@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 from tqdm import tqdm
+import os
 
 def open_SR_tab(filename):
     """
@@ -140,7 +141,7 @@ def kendall_tau( years, values ):
 test_1 = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/Perturbation_method/data_jurek_helcom/dry_oxidised_nitrogen_2019.csv"
 test_2 = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/Perturbation_method/data_jurek_ospar/dry_oxidised_nitrogen_2019.csv"
 
-def plot_graph_brute(receptor,source,method,pol,normalization):
+def plot_graph(receptor,source,method,pol,normalization,path):
     if method == "Perturbation":
         if normalization == "n":
             norm_txt = "Normalization off"
@@ -182,7 +183,7 @@ def plot_graph_brute(receptor,source,method,pol,normalization):
                     j_1 = sources_1.index(source)
                     i_2 = receptors_2.index(receptor)
                     j_2 = sources_2.index(source)
-                    list_value.append((result_1[i_1][j_1]+result_2[i_2][j_2])/2)
+                    list_value.append((result_1[i_1][j_1]+result_2[i_2][j_2])/20)
                 else:
                     filename = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/Perturbation_method/"+pol+"/output_SR_"+str(k)+".txt"
                     temp = open_SR_tab(filename)
@@ -191,7 +192,7 @@ def plot_graph_brute(receptor,source,method,pol,normalization):
                     result = convert(temp[2])
                     i = receptors.index(receptor)
                     j = sources.index(source)
-                    list_value.append(result[i][j])
+                    list_value.append(result[i][j]/10)
     elif method =="Local fraction":
         if normalization =="n":
             norm_txt = "Normalization off"
@@ -227,7 +228,21 @@ def plot_graph_brute(receptor,source,method,pol,normalization):
             list_value = []
             for k in range(1995,2021):
                 if k == 2015:
-
+                    filename_1 = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k-1)+".txt"
+                    filename_2 = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k+1)+".txt"
+                    temp_1 = open_SR_tab(filename_1)
+                    temp_2 = open_SR_tab(filename_2)
+                    sources_1 = temp_1[0][1:]
+                    sources_2 = temp_2[0][1:]
+                    receptors_1 = temp_1[1]
+                    receptors_2 = temp_2[1]
+                    result_1 = convert(temp_1[2])
+                    result_2 = convert(temp_2[2])
+                    i_1 = receptors_1.index(receptor)
+                    j_1 = sources_1.index(source)
+                    i_2 = receptors_2.index(receptor)
+                    j_2 = sources_2.index(source)
+                    list_value.append((result_1[i_1][j_1]+result_2[i_2][j_2])/20)
                 else:
                     filename = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k)+".txt"
                     temp = open_SR_tab(filename)
@@ -236,7 +251,7 @@ def plot_graph_brute(receptor,source,method,pol,normalization):
                     result = convert(temp[2])
                     i = receptors.index(receptor)
                     j = sources.index(source)
-                    list_value.append(result[i][j]/20)
+                    list_value.append(result[i][j]/10)
     absc = np.linspace(1995,2020,26)
     plt.plot(absc,list_value,color="red",marker="o")
     lin = lin_reg(list_value,absc)
@@ -247,4 +262,14 @@ def plot_graph_brute(receptor,source,method,pol,normalization):
     plt.ylabel("Dep in kt(N)/yr")
     plt.grid()
     plt.legend()
-    plt.show()
+    plt.savefig(path,dpi=1000)
+    plt.close()
+
+def run(source,receptor):
+    os.system("mkdir /home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor)
+    plot_graph(receptor,source,"Perturbation","reduced","n","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_Perturbation_reduced_normalizationOff.jpg")
+    plot_graph(receptor,source,"Perturbation","reduced","y","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_Perturbation_reduced_normalizationOn.jpg")
+    plot_graph(receptor,source,"Local fraction","reduced","n","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_LocalFraction_reduced_normalizationOff.jpg")
+    plot_graph(receptor,source,"Local fraction","reduced","y","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_LocalFraction_reduced_normalizationOn.jpg")
+
+
