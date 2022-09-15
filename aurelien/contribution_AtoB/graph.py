@@ -147,10 +147,10 @@ def plot_graph(receptor,source,method,pol,normalization,path):
             norm_txt = "Normalization off"
             list_value = []
             for k in range(1995,2021):
-                filename_1 = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/Perturbation_method/data_jurek_helcom/dry_"+pol+"_nitrogen_"+str(k)+".csv"
-                filename_2 = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/Perturbation_method/data_jurek_ospar/dry_"+pol+"_nitrogen_"+str(k)+".csv"
-                filename_1bis = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/Perturbation_method/data_jurek_helcom/wet_"+pol+"_nitrogen_"+str(k)+".csv"
-                filename_2bis = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/Perturbation_method/data_jurek_ospar/wet_"+pol+"_nitrogen_"+str(k)+".csv"
+                filename_1 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/brute/Perturbation_method/data_jurek_helcom/dry_"+pol+"_nitrogen_"+str(k)+".csv"
+                filename_2 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/brute/Perturbation_method/data_jurek_ospar/dry_"+pol+"_nitrogen_"+str(k)+".csv"
+                filename_1bis = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/brute/Perturbation_method/data_jurek_helcom/wet_"+pol+"_nitrogen_"+str(k)+".csv"
+                filename_2bis = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/brute/Perturbation_method/data_jurek_ospar/wet_"+pol+"_nitrogen_"+str(k)+".csv"
                 temp_dry = fusion_open_SR_table(filename_1,filename_2)
                 temp_wet = fusion_open_SR_table(filename_1bis,filename_2bis)
                 result_dry = convert(temp_dry[2])
@@ -169,8 +169,8 @@ def plot_graph(receptor,source,method,pol,normalization,path):
             list_value = []
             for k in range(1995,2021):
                 if k == 2015:
-                    filename_1 = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/Perturbation_method/"+pol+"/output_SR_"+str(k-1)+".txt"
-                    filename_2 = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/Perturbation_method/"+pol+"/output_SR_"+str(k+1)+".txt"
+                    filename_1 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/normalized/Perturbation_method/"+pol+"/output_SR_"+str(k-1)+".txt"
+                    filename_2 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/normalized/Perturbation_method/"+pol+"/output_SR_"+str(k+1)+".txt"
                     temp_1 = open_SR_tab(filename_1)
                     temp_2 = open_SR_tab(filename_2)
                     sources_1 = temp_1[0][1:]
@@ -185,7 +185,7 @@ def plot_graph(receptor,source,method,pol,normalization,path):
                     j_2 = sources_2.index(source)
                     list_value.append((result_1[i_1][j_1]+result_2[i_2][j_2])/20)
                 else:
-                    filename = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/Perturbation_method/"+pol+"/output_SR_"+str(k)+".txt"
+                    filename = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/normalized/Perturbation_method/"+pol+"/output_SR_"+str(k)+".txt"
                     temp = open_SR_tab(filename)
                     sources = temp[0][1:]
                     receptors = temp[1]
@@ -199,8 +199,8 @@ def plot_graph(receptor,source,method,pol,normalization,path):
             list_value = []
             for k in range(1995,2021):
                 if k == 2015:
-                    filename_1 = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/LocalFraction_method/"+str(k-1)+"_reduced_nitrogenLF.csv"
-                    filename_2 = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/LocalFraction_method/"+str(k+1)+"_reduced_nitrogenLF.csv"
+                    filename_1 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/brute/LocalFraction_method/"+str(k-1)+"_reduced_nitrogenLF.csv"
+                    filename_2 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/brute/LocalFraction_method/"+str(k+1)+"_reduced_nitrogenLF.csv"
                     temp_1 = open_SR_tab(filename_1)
                     temp_2 = open_SR_tab(filename_2)
                     sources_1 = temp_1[0][1:]
@@ -215,7 +215,7 @@ def plot_graph(receptor,source,method,pol,normalization,path):
                     j_2 = sources_2.index(source)
                     list_value.append((result_1[i_1][j_1]+result_2[i_2][j_2])/20)
                 else:
-                    filename = "/home/aurelienh/Desktop/Int/contribution_AtoB/brute/LocalFraction_method/"+str(k)+"_reduced_nitrogenLF.csv"
+                    filename = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/brute/LocalFraction_method/"+str(k)+"_reduced_nitrogenLF.csv"
                     temp = open_SR_tab(filename)
                     sources = temp[0][1:]
                     receptors = temp[1]
@@ -228,8 +228,8 @@ def plot_graph(receptor,source,method,pol,normalization,path):
             list_value = []
             for k in range(1995,2021):
                 if k == 2015:
-                    filename_1 = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k-1)+".txt"
-                    filename_2 = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k+1)+".txt"
+                    filename_1 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k-1)+".txt"
+                    filename_2 = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k+1)+".txt"
                     temp_1 = open_SR_tab(filename_1)
                     temp_2 = open_SR_tab(filename_2)
                     sources_1 = temp_1[0][1:]
@@ -244,7 +244,7 @@ def plot_graph(receptor,source,method,pol,normalization,path):
                     j_2 = sources_2.index(source)
                     list_value.append((result_1[i_1][j_1]+result_2[i_2][j_2])/20)
                 else:
-                    filename = "/home/aurelienh/Desktop/Int/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k)+".txt"
+                    filename = "/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/normalized/LocalFraction_method/RDN_LF_"+str(k)+".txt"
                     temp = open_SR_tab(filename)
                     sources = temp[0][1:]
                     receptors = temp[1]
@@ -266,10 +266,10 @@ def plot_graph(receptor,source,method,pol,normalization,path):
     plt.close()
 
 def run(source,receptor):
-    os.system("mkdir /home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor)
-    plot_graph(receptor,source,"Perturbation","reduced","n","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_Perturbation_reduced_normalizationOff.jpg")
-    plot_graph(receptor,source,"Perturbation","reduced","y","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_Perturbation_reduced_normalizationOn.jpg")
-    plot_graph(receptor,source,"Local fraction","reduced","n","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_LocalFraction_reduced_normalizationOff.jpg")
-    plot_graph(receptor,source,"Local fraction","reduced","y","/home/aurelienh/Desktop/Int/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_LocalFraction_reduced_normalizationOn.jpg")
+    os.system("mkdir /home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/result/"+source+"_to_"+receptor)
+    plot_graph(receptor,source,"Perturbation","reduced","n","/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_Perturbation_reduced_normalizationOff.jpg")
+    plot_graph(receptor,source,"Perturbation","reduced","y","/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_Perturbation_reduced_normalizationOn.jpg")
+    plot_graph(receptor,source,"Local fraction","reduced","n","/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_LocalFraction_reduced_normalizationOff.jpg")
+    plot_graph(receptor,source,"Local fraction","reduced","y","/home/aurelienh/Desktop/Int/aurelien/contribution_AtoB/result/"+source+"_to_"+receptor+"/"+source+"_to_"+receptor+"_LocalFraction_reduced_normalizationOn.jpg")
 
 
