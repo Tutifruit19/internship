@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import statistics as sc
 from tqdm import tqdm
 
-SOI_index = np.genfromtxt("/home/aurelienh/Desktop/Int/ENSO_link/SOI_index.txt")
+SOI_index = np.genfromtxt("/home/aurelienh/Desktop/Int/aurelien/ENSO_link/SOI_index.txt")
 
 years_SOI = []
 for i in range(np.shape(SOI_index)[0]):
@@ -103,8 +103,8 @@ def sorting(heiko_sources,heiko_result,jurek_sources,jurek_result):
         heiko_sorted_sources.append(heiko_sources[new_index_heiko[i]])
     return [heiko_sorted_sources,heiko_sorted_result]
 
-tab_1 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_oxidised_1995-2020_2019.csv")
-tab_2 = open_SR_tab("/home/aurelienh/Desktop/Int/task_3_4/result/output_SR_oxidised_2013-2020_2019.csv")
+tab_1 = open_SR_tab("/home/aurelienh/Desktop/Int/aurelien/task_3_4/result/output_SR_oxidised_1995-2020_2019.csv")
+tab_2 = open_SR_tab("/home/aurelienh/Desktop/Int/aurelien/task_3_4/result/output_SR_oxidised_2013-2020_2019.csv")
 
 value_1 = convert(tab_1[2])
 value_2 = convert(tab_2[2])
@@ -128,7 +128,7 @@ def plot_1(index_value):
     plt.title("All sources contribution for "+str(tab_1[1][index_value]))
     plt.legend()
     plt.xticks(rotation=45,fontsize=8)
-    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/oxidised_6years/all_sources_contribution/all_sources_contribution_for_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
+    plt.savefig("/home/aurelienh/Desktop/Int/aurelien/task_3_4/result/oxidised_6years/all_sources_contribution/all_sources_contribution_for_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
     plt.close()
 
 def plot_2(index_value):
@@ -141,7 +141,7 @@ def plot_2(index_value):
     plt.title("2019 for "+str(tab_1[1][index_value])+": Ratio min(normalization 1995-2020, normalization 2013-2020 years) / max(normalization 1995-2020, normalization 2013-2020 years)",fontsize=6)
     plt.legend()
     plt.xticks(rotation=45,fontsize=8)
-    plt.savefig("/home/aurelienh/Desktop/Int/task_3_4/result/oxidised_6years/ratio/ratio_sources_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
+    plt.savefig("/home/aurelienh/Desktop/Int/aurelien/task_3_4/result/oxidised_6years/ratio/ratio_sources_"+str(tab_1[1][index_value])+".jpg",dpi=1000)
     plt.close()
 
 def run():

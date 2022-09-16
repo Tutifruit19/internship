@@ -6,17 +6,46 @@
 
 import numpy as np
 import csv
+#questions for the user
+print("-----------------------------------\n")
+#years
+print("YEARS")
+print("Enter the first and the last year :")
+print("ex: 1999,2006")
+user_years = input()
+print("-----------------------------------\n")
+#receptors
+print("RECEPTORS")
+# creating an empty list
+user_receptors = []
+# number of elements as input
+n = int(input("Enter number of receptors you want : "))
+# iterating till the range
+for i in range(0, n):
+    print("Name of the receptor:")
+    ele = str(input())
+    user_receptors.append(ele) # adding the element
+print("-----------------------------------\n")
+#asking is OXN is available (right now it isn't for the local fraction method)
+print("OXN")
+print("Are the OXN source/receptor tables available?")
+print("yes/no")
+OXN_available = input()
+print("-----------------------------------\n")
+#name of the file created by routine
+print("NAME OF THE FILE")
+print("How do you want to call the final file?")
+user_file_name = input()
+
+
 
 #local fraction tables 
-#local fraction tables 
-RDN_files = ["RDN_1995.txt", "RDN_1996.txt", "RDN_1997.txt", "RDN_1998.txt", "RDN_1999.txt", "RDN_2000.txt","RDN_2001.txt", "RDN_2002.txt","RDN_2003.txt","RDN_2004.txt","RDN_2005.txt","RDN_2006.txt","RDN_2007.txt","RDN_2008.txt", "RDN_2009.txt","RDN_2010.txt","RDN_2011.txt","RDN_2012.txt","RDN_2013.txt","RDN_2014.txt","RDN_2016.txt","RDN_2017.txt","RDN_2018.txt","RDN_2019.txt","RDN_2020.txt",]
-OXN_files = ["OXN_1995.txt", "OXN_1996.txt", "OXN_1997.txt", "OXN_1998.txt", "OXN_1999.txt", "OXN_2000.txt","OXN_2001.txt", "OXN_2002.txt","OXN_2003.txt","OXN_2004.txt","OXN_2005.txt","OXN_2006.txt","OXN_2007.txt","OXN_2008.txt", "OXN_2009.txt","OXN_2010.txt","OXN_2011.txt","OXN_2012.txt","OXN_2013.txt","OXN_2014.txt","OXN_2016.txt","OXN_2017.txt","OXN_2018.txt","OXN_2019.txt","OXN_2020.txt",]
-
-#HELCOM receptors
-#HELCOM = ['HE8','HE5','HE1','HE2','HE3','HE4','HE7','HE6','HE9']
-
-#OSPAR receptors
-OSPAR = ["OR1", "OR2", "OR3", "OR4", "OR5", "EEZ100", "EEZ1065", "EEZ1071", "EEZ108", "EEZ109", "EEZ110", "EEZ1100", "EEZ119", "EEZ1213", "EEZ185", "EEZ188", "EEZ189", "EEZ190", "EEZ191", "EEZ2065", "EEZ209", "EEZ2100", "EEZ212", "EEZ213", "EEZ215", "EEZ216", "EEZ2209", "EEZ2213", "EEZ2216", "EEZ224", "EEZ273", "EEZ3108", "EEZ3209", "EEZ3213", "EEZ4091", "EEZ4209", "EEZ4213", "EEZ4273", "EEZ48", "EEZ5065", "EEZ5071", "EEZ5091", "EEZ5100", "EEZ5108", "EEZ5209", "EEZ5213", "EEZ5273", "EEZ65", "EEZ71", "EEZ91", "EEZ99"]
+list_years = np.arange(float(user_years[0:4]),float(user_years[5:9])+1)
+RDN_files = []
+OXN_files = []
+for year in list_years:
+    RDN_files.append("RDN_" + str(int(year)) + ".txt")
+    OXN_files.append("OXN_" + str(int(year)) + ".txt")
 
 def deposition_values(file, receptors):
 
@@ -37,8 +66,8 @@ def deposition_values(file, receptors):
     deposition_float = []
     deposition_str = []
 
-    pollutant = file[5:8]
-    year = file[0:4]
+    pollutant = file[0:3]
+    year = file[4:8]
 
     #dictionary of the values of N per receptor
     with open(file, "r") as csv_file:   
@@ -82,7 +111,7 @@ def total_deposition_values(RDN_file, OXN_file, receptors):
 
     pollutant = OXN_file[0:3]
     year = OXN_file[4:8]
-
+     
     #list of OXN values per receptor
     with open(OXN_file, "r") as csv_file:   
         csv_reader = csv.reader(csv_file, delimiter = "\t")
@@ -135,36 +164,50 @@ def total_deposition_values(RDN_file, OXN_file, receptors):
 
     return(pollutant, year, deposition_str)
 
-    
 
-#writing the LF data in a csv file
-#we don't have oxidized nitrogen for local fraction method : 
+#doing an str with the list of receptors
+str_receptors = ""
+for receptor in user_receptors:
+    str_receptors = str_receptors + ";" +  str(receptor) 
+
+#writing the data in a csv file
 #oxidised nitrogen
-LF_deposition = open("OSPAR_LF_dep_1995_2020.txt", "w")
-LF_deposition.write("\n Oxidised N;\n\nyear;OR1;OR2;OR3;OR4;OR5;EEZ100;EEZ1065;EEZ1071;EEZ108;EEZ109;EEZ110;EEZ1100;EEZ119;EEZ1213;EEZ185;EEZ188;EEZ189;EEZ190;EEZ191;EEZ2065;EEZ209;EEZ2100;EEZ212;EEZ213;EEZ215;EEZ216;EEZ2209;EEZ2213;EEZ2216;EEZ224;EEZ273;EEZ3108;EEZ3209;EEZ3213;EEZ4091;EEZ4209;EEZ4213;EEZ4273;EEZ48;EEZ5065;EEZ5071;EEZ5091;EEZ5100;EEZ5108;EEZ5209;EEZ5213;EEZ5273;EEZ65;EEZ71;EEZ91;EEZ99\n")
-LF_deposition.close()
+deposition_data = open(user_file_name, "w")
+deposition_data.write("\n Oxidised N;\n\nyear" + str_receptors + "\n")
+deposition_data.close()
 for file in RDN_files :  
-    LF_deposition = open("OSPAR_LF_dep_1995_2020.txt", "a")
-    pollutant, year, deposition = deposition_values(file,OSPAR)
-    deposition = ["       0.0", "       0.0","       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0","       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0","       0.0""       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0","       0.0","       0.0","       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0","       0.0", "       0.0","       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0","       0.0", "       0.0","       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0", "       0.0","       0.0"]
-    LF_deposition.write(year + ";" + deposition[0] + ";" + deposition[1] + ";" + deposition[2] + ";" + deposition[3] + ";"  + deposition[4] + ";" + deposition[5] + ";" + deposition[6] + ";" + deposition[7] + ";" + deposition[8] + ";" + deposition[9] + ";" + deposition[10] + ";" + deposition[11] + ";" + deposition[12] + ";"  + deposition[13] + ";" + deposition[14] + ";" + deposition[15] + ";" + deposition[16] + ";" + deposition[17] +";" + deposition[18] + ";" + deposition[19] + ";" + deposition[20] + ";" + deposition[21] + ";"  + deposition[22] + ";" + deposition[23] + ";" + deposition[24] + ";" + deposition[25] + ";" + deposition[26] + ";" + deposition[27] + ";" + deposition[28] + ";" + deposition[29] + ";" + deposition[30] + ";"  + deposition[31] + ";" + deposition[32] + ";" + deposition[33] + ";" + deposition[34] + ";" + deposition[35]+ ";" + deposition[36] + ";" + deposition[37] + ";" + deposition[38] + ";" + deposition[39] + ";"  + deposition[40] + ";" + deposition[41] + ";" + deposition[42] + ";" + deposition[43] + ";" + deposition[44]+ ";" + deposition[45] + ";" + deposition[46] + ";" + deposition[47] + ";"  + deposition[48] + ";" + deposition[49] + ";" + deposition[50] + "\n")
+    deposition_data = open(user_file_name, "a")
+    pollutant, year, deposition = deposition_values(file,user_receptors)
+    deposition_data.write(year)
+    for i in range(len(user_receptors)):
+        if OXN_available == "no" : 
+            deposition[i] = "       0.0"
+        deposition_data.write(";" + deposition[i])
+    deposition_data.write("\n")
 
 
 #reduceded nitrogen
-LF_deposition = open("OSPAR_LF_dep_1995_2020.txt", "a")
-LF_deposition.write("\n Reduced N;\n\nyear;OR1;OR2;OR3;OR4;OR5;EEZ100;EEZ1065;EEZ1071;EEZ108;EEZ109;EEZ110;EEZ1100;EEZ119;EEZ1213;EEZ185;EEZ188;EEZ189;EEZ190;EEZ191;EEZ2065;EEZ209;EEZ2100;EEZ212;EEZ213;EEZ215;EEZ216;EEZ2209;EEZ2213;EEZ2216;EEZ224;EEZ273;EEZ3108;EEZ3209;EEZ3213;EEZ4091;EEZ4209;EEZ4213;EEZ4273;EEZ48;EEZ5065;EEZ5071;EEZ5091;EEZ5100;EEZ5108;EEZ5209;EEZ5213;EEZ5273;EEZ65;EEZ71;EEZ91;EEZ99\n")
-LF_deposition.close()
+deposition_data = open(user_file_name, "a")
+deposition_data.write("\n Reduced N;\n\nyear" + str_receptors + "\n")
+deposition_data.close()
 for file in RDN_files :  
-    LF_deposition = open("OSPAR_LF_dep_1995_2020.txt", "a")
-    pollutant, year, deposition = deposition_values(file,OSPAR)
-    LF_deposition.write(year + ";" + deposition[0] + ";" + deposition[1] + ";" + deposition[2] + ";" + deposition[3] + ";"  + deposition[4] + ";" + deposition[5] + ";" + deposition[6] + ";" + deposition[7] + ";" + deposition[8] + ";" + deposition[9] + ";" + deposition[10] + ";" + deposition[11] + ";" + deposition[12] + ";"  + deposition[13] + ";" + deposition[14] + ";" + deposition[15] + ";" + deposition[16] + ";" + deposition[17] +";" + deposition[18] + ";" + deposition[19] + ";" + deposition[20] + ";" + deposition[21] + ";"  + deposition[22] + ";" + deposition[23] + ";" + deposition[24] + ";" + deposition[25] + ";" + deposition[26] + ";" + deposition[27] + ";" + deposition[28] + ";" + deposition[29] + ";" + deposition[30] + ";"  + deposition[31] + ";" + deposition[32] + ";" + deposition[33] + ";" + deposition[34] + ";" + deposition[35]+ ";" + deposition[36] + ";" + deposition[37] + ";" + deposition[38] + ";" + deposition[39] + ";"  + deposition[40] + ";" + deposition[41] + ";" + deposition[42] + ";" + deposition[43] + ";" + deposition[44]+ ";" + deposition[45] + ";" + deposition[46] + ";" + deposition[47] + ";"  + deposition[48] + ";" + deposition[49] + ";" + deposition[50] +"\n")
+    deposition_data = open(user_file_name, "a")
+    pollutant, year, deposition = deposition_values(file,user_receptors)
+    deposition_data.write(year)
+    for i in range(len(user_receptors)):
+        deposition_data.write(";" + deposition[i])
+    deposition_data.write("\n")
+    
 
 # we don't have total nitrogen for local fraction method, because we do not have the OXN : 
 #total nitrogen = reduced nitrogen
-LF_deposition = open("OSPAR_LF_dep_1995_2020.txt", "a")
-LF_deposition.write("\n Total N;\n\nyear;OR1;OR2;OR3;OR4;OR5;EEZ100;EEZ1065;EEZ1071;EEZ108;EEZ109;EEZ110;EEZ1100;EEZ119;EEZ1213;EEZ185;EEZ188;EEZ189;EEZ190;EEZ191;EEZ2065;EEZ209;EEZ2100;EEZ212;EEZ213;EEZ215;EEZ216;EEZ2209;EEZ2213;EEZ2216;EEZ224;EEZ273;EEZ3108;EEZ3209;EEZ3213;EEZ4091;EEZ4209;EEZ4213;EEZ4273;EEZ48;EEZ5065;EEZ5071;EEZ5091;EEZ5100;EEZ5108;EEZ5209;EEZ5213;EEZ5273;EEZ65;EEZ71;EEZ91;EEZ99\n")
-LF_deposition.close()
+deposition_data = open(user_file_name, "a")
+deposition_data.write("\n Total N;\n\nyear" + str_receptors + "\n")
+deposition_data.close()
 for file in RDN_files :  
-    LF_deposition = open("OSPAR_LF_dep_1995_2020.txt", "a")
-    pollutant, year, deposition = deposition_values(file,OSPAR)
-    LF_deposition.write(year + ";" + deposition[0] + ";" + deposition[1] + ";" + deposition[2] + ";" + deposition[3] + ";"  + deposition[4] + ";" + deposition[5] + ";" + deposition[6] + ";" + deposition[7] + ";" + deposition[8] + ";" + deposition[9] + ";" + deposition[10] + ";" + deposition[11] + ";" + deposition[12] + ";"  + deposition[13] + ";" + deposition[14] + ";" + deposition[15] + ";" + deposition[16] + ";" + deposition[17] +";" + deposition[18] + ";" + deposition[19] + ";" + deposition[20] + ";" + deposition[21] + ";"  + deposition[22] + ";" + deposition[23] + ";" + deposition[24] + ";" + deposition[25] + ";" + deposition[26] + ";" + deposition[27] + ";" + deposition[28] + ";" + deposition[29] + ";" + deposition[30] + ";"  + deposition[31] + ";" + deposition[32] + ";" + deposition[33] + ";" + deposition[34] + ";" + deposition[35]+ ";" + deposition[36] + ";" + deposition[37] + ";" + deposition[38] + ";" + deposition[39] + ";"  + deposition[40] + ";" + deposition[41] + ";" + deposition[42] + ";" + deposition[43] + ";" + deposition[44]+ ";" + deposition[45] + ";" + deposition[46] + ";" + deposition[47] + ";"  + deposition[48] + ";" + deposition[49] + ";" + deposition[50] +"\n")
+    deposition_data = open(user_file_name, "a")
+    pollutant, year, deposition = deposition_values(file,user_receptors)
+    deposition_data.write(year)
+    for i in range(len(user_receptors)):
+        deposition_data.write(";" + deposition[i])
+    deposition_data.write("\n")
